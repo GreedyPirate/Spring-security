@@ -1,5 +1,6 @@
 package com.ttyc.securitydemo;
 
+import com.alibaba.fastjson.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,9 +32,12 @@ public class SecurityDemoApplicationTests {
 
     @Test
     public void contextLoads() throws Exception {
-        mockMvc.perform(get("/user/101").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+        String result = mockMvc
+                .perform(get("/user/101").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(101));
+                .andExpect(jsonPath("$.id").value(101))
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(result);
     }
 
     @Test

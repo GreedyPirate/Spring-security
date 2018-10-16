@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("user")
 public class UserController {
 
+
     @GetMapping("{id:\\d+}")
-    public User getInfo(@PathVariable(required = true) Long id){
+    public User query(@PathVariable(name = "id", required = true) Long id){
         User user = new User();
         user.setId(id);
         user.setPassword("1234");
