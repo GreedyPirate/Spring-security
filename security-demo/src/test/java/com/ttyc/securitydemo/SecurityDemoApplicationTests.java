@@ -12,7 +12,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.net.URI;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,13 +44,29 @@ public class SecurityDemoApplicationTests {
     }
 
     @Test
-    public void query() throws Exception {
-        mockMvc.perform(get("/user/login").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .param("id", "102")
-                .param("username", "jay")
-                .param("password", "root"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").value("true"));
+    public void testQuery() throws Exception {
+        String result =
+                //执行get请求，这里有个小坑，第一个/必须有
+                mockMvc.perform(get("/user/info")
+                        //设置content-type请求头
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        //设置参数
+                        .param("name", "jay"))
+                        //预期的相应码是200-ok
+                        .andExpect(status().isOk())
+                        //预期的id值为101
+                        .andExpect(jsonPath("$.username").value("jays"))
+                        //获取响应体
+                        .andReturn().getResponse().getContentAsString();
+        System.out.println(result);
     }
 
+    @Test
+    public void testBlankName() throws Exception {
+        String params = "{\"id\": 101,\"username\": \"\",\"password\": \"1234\"}";
+        mockMvc.perform(post("/user/login")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(params))
+                .andExpect(status().isBadRequest());
+    }
 }
