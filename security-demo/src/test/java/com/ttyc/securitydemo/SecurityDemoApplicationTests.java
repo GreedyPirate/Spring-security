@@ -69,4 +69,35 @@ public class SecurityDemoApplicationTests {
                 .content(params))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void testInFaild() throws Exception {
+        String params = "{\"id\": 101,\"username\": \"jay\",\"password\": \"1234\",\"type\": \"5\"}";
+        mockMvc.perform(post("/user/login")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(params))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testInFaildMessage() throws Exception {
+        String params = "{\"id\": 101,\"username\": \"jay\",\"password\": \"1234\",\"type\": \"5\"}";
+        String result = mockMvc.perform(post("/user/login")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(params))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(result);
+    }
+
+    @Test
+    public void testError() throws Exception {
+        String result =
+                mockMvc.perform(get("/user/error"))
+                        //预期的相应码是200-ok
+                        .andExpect(status().isInternalServerError())
+                        //获取响应体
+                        .andReturn().getResponse().getContentAsString();
+        System.out.println(result);
+    }
 }

@@ -1,8 +1,11 @@
 package com.ttyc.securitydemo.controller;
 
+import com.ttyc.securitydemo.error.ServiceException;
+import com.ttyc.securitydemo.error.UserError;
 import com.ttyc.securitydemo.model.User;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,12 +32,12 @@ public class UserController {
     }
 
     @PostMapping("login")
-    public User login(@Valid @RequestBody User user, BindingResult result){
-        if(result.hasErrors()){
-            result.getFieldErrors().stream().forEach(error -> {
-                // ....
-            });
-        }
+    public User login(@Valid @RequestBody User user){
         return user;
+    }
+
+    @GetMapping("error")
+    public boolean error(){
+        throw new ServiceException(UserError.NO_SUCH_USER);
     }
 }

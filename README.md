@@ -12,9 +12,10 @@ public class DemoApplicationTests {
 }
 ```
 
-以用户查询为例，通常有一个用户实体，以及`UserController` , 其中@Data注解来自lombok
+以用户查询为例，通常有一个用户实体，以及`UserController`
 
-```
+```java
+// @Data注解来自lombok
 @Data
 public class User {
 
@@ -26,7 +27,7 @@ public class User {
 }
 ```
 
-query方法是一个restful接口，模拟查询用户详情, 并且使用正则校验id必须是数字
+`query方法是一个restful接口，模拟查询用户详情, 并且使用正则校验id必须是数字
 
 ```java
 @RestController
@@ -117,7 +118,7 @@ mockMvc.perform(post("/user/login")
         .andExpect(status().isOk());
 ```
 
-注意后端接受json格式参数的方式：`方法名(@RequestBody User user)` 哦
+注意后端接受json格式参数的方式：`方法名(@RequestBody User user)` 
 
 
 
@@ -181,10 +182,178 @@ public class ResponseAdvisor implements ResponseBodyAdvice {
 
 
 
-
 # Spring boot实践之异常处理
 
+在上一章[封装返回体]()中，已经对请求成功的情况进行了封装，接下来便是处理异常，服务的生产者需要通过状态码此次请求是否成功，出现异常时，错误信息是什么，形如:
 
+```json
+{
+    "code": 1,
+    "msg": "FAILED",
+    "data": null
+}
+```
+
+可以看出只需要`code`与`msg`, 参考 `org.springframework.http.HttpStatus`的实现，我们可以定义一个枚举来封装错误信息，对外暴露`getCode`，`getMsg`方法即可。由于异常属于一个基础模块，将这两个方法抽象到一个接口中。
+
+错误接口
+
+```java
+public interface ExceptionEntity {
+
+    Integer getCode();
+
+    String getMsg();
+}
+```
+
+以用户模块为例，所有用户相关的业务信息封装到`UserError`中
+
+```java
+public enum UserError implements ExceptionEntity {
+
+    NO_SUCH_USER(1, "用户不存在"),
+    ERROR_PASSWORD(2, "密码错误"),
+    ;
+
+    private final Integer MODULE = 10000;
+
+    private Integer code;
+
+    private String msg;
+
+    UserError(Integer code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
+
+    @Override
+    public Integer getCode() {
+        return MODULE + this.code;
+    }
+
+    @Override
+    public String getMsg() {
+        return this.msg;
+    }
+}
+
+```
+
+需要注意的地方是笔者定义了一个`MODULE`字段，10000表示用户微服务，这样在拿到错误信息之后，可以很快定位报错的应用
+
+自定义异常
+
+```java
+@Data
+// 自动生成构造方法
+@AllArgsConstructor
+public class ServiceException extends RuntimeException{
+    ExceptionEntity error;  
+}
+```
+
+需要说明的是错误接口与自定义异常属于公共模块，而`UserError`属于用户服务
+
+这样做了之后，便可以抛出异常
+
+```java
+throw new ServiceException(UserError.ERROR_PASSWORD);
+```
+
+目前来看，我们只是较为优雅的封装了异常，此时请求接口返回的是Spring boot默认的错误体
+
+```java
+{
+    "timestamp": "2018-10-18T12:28:59.150+0000",
+    "status": 500,
+    "error": "Internal Server Error",
+    "message": "No message available",
+    "path": "/user/error"
+}
+```
+
+接下来的异常拦截方式，各路神仙都有自己的方法，笔者只说Spring boot项目中比较通用的`@ControllerAdvice`，由于是Restful接口，这里使用`@RestControllerAdvice`
+
+```java
+// 注意这属于基础模块，扫描路径不要包含具体的模块，用..代替
+@RestControllerAdvice(basePackages="com.ttyc..controller",annotations={RestController.class})
+// lombok的日志简写
+@Slf4j
+public class ControllerExceptionAdvisor{
+
+    @ExceptionHandler({ServiceException.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseModel handleServiceException(ServiceException ex){
+        Integer code = ex.getError().getCode();
+        String msg = ex.getError().getMsg();
+        log.error(msg);
+
+        ResponseModel model = new ResponseModel();
+        model.setCode(code);
+        model.setMsg(msg);
+
+        return model;
+    }
+    
+    /**
+     * 其他错误
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler({Exception.class})
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseModel exception(Exception ex) {
+        int code = HttpStatus.INTERNAL_SERVER_ERROR.value();
+        String msg = HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase();
+        log.error(msg);
+
+        ResponseModel model = new ResponseModel();
+        model.setCode(code);
+        model.setMsg(msg);
+
+        return model;
+    }
+}
+```
+
+具有争议的一点是捕获`ServiceExcption`之后，应该返回200还是500的响应码，有的公司返回200，使用`code`字段判断成功失败，这完全没有问题，但是按照Restful的开发风格，这里的`@ResponseStatus`笔者返回了500，请读者根据自身情况返回响应码
+
+测试接口与测试用例
+
+测试接口
+
+```java
+    @GetMapping("error")
+    public boolean error(){
+        throw new ServiceException(UserError.NO_SUCH_USER);
+    }
+```
+
+
+
+测试用例
+
+```java
+    @Test
+    public void testError() throws Exception {
+        String result =
+                mockMvc.perform(get("/user/error"))
+                        .andExpect(status().isInternalServerError())
+                        .andReturn().getResponse().getContentAsString();
+        System.out.println(result);
+    }
+```
+
+结果为:
+
+```json
+{
+	"data": null,
+	"code": 10001,
+	"msg": "用户不存在"
+}
+```
 
 
 
@@ -208,7 +377,7 @@ public User login(@RequestBody User user){
 
 这无疑是件让人崩溃的事情，此时作为一个开发人员，你已经意识到需要一个小而美的工具来解决这个问题，你可以去google，去github搜索这类项目，而不是毫无作为，抑或者是自己去造轮子
 
-JSR303规范应运而生，其中比较出名的实现就是Hibernate Validator，其中常用的注解有
+JSR303规范应运而生，其中比较出名的实现就是Hibernate Validator，其中`javax.validation.constraints`包下常用的注解有
 
 | 注解                           | 含义                                                         |
 | :----------------------------- | :----------------------------------------------------------- |
@@ -231,6 +400,7 @@ JSR303规范应运而生，其中比较出名的实现就是Hibernate Validator�
 | @Past                          | 值必须是过去的日期                                           |
 | @Max(value=)                   | 值必须小于等于value指定的值。不能注解在字符串类型的属性上    |
 | @Min(value=)                   | 值必须大于等于value指定的值。不能注解在字符串类型的属性上    |
+| ...                            | ...                                                          |
 
 
 
@@ -293,70 +463,102 @@ public void testBlankName() throws Exception {
 
 ![进入断点](/Users/admin/Pictures/斗/QQ20181018-2.png)
 
-继续优化，想必大家也发现了，难道每个方法都要写`if`? 当然不用，ControllerAdvice不是专门封装错误信息的吗，根据[Spring boot实践之异常处理]()，我们很容易写出以下代码
+继续优化，想必大家也发现了，难道每个方法都要写`if`? 当然不用，ControllerAdvice不就是专门封装错误信息的吗，根据[Spring boot实践之异常处理]()，我们很容易写出以下代码
 
 ```java
-@ExceptionHandler({BindException.class})
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-public ResponseModel exception(BindException ex) {
-    ResponseModel model = new ResponseModel();
-    model.setData(null);
-    model.setCode(HttpStatus.BAD_REQUEST.value());
-    model.setMsg(buildErrorMessage(ex));
-    String classname = ex.getClass().getSimpleName();
-    log.error("{} is occured, message is {}",classname, ex.getMessage());
-    return model;
-}
-
 @ExceptionHandler({MethodArgumentNotValidException.class})
-@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public ResponseModel exception(MethodArgumentNotValidException ex) {
     ResponseModel model = new ResponseModel();
     model.setData(null);
     model.setCode(HttpStatus.BAD_REQUEST.value());
     model.setMsg(buildErrorMessage(ex));
-    String classname = ex.getClass().getSimpleName();
-    log.error("{} is occured, message is {}",classname, ex.getMessage());
     return model;
 }
 
-
-private String buildErrorMessage(BindException ex){
-    return buildObjectErrorMessage(ex.getAllErrors());
-}
-
-private String buildErrorMessage(MethodArgumentNotValidException ex){
-    return buildObjectErrorMessage(ex.getBindingResult().getAllErrors());
-}
-
 /**
-     * 构建错误信息
-     * @param objectErrors
-     * @return
-     */
-private String buildObjectErrorMessage(List<ObjectError> objectErrors){
-    StringBuilder message = new StringBuilder(PREFIX_ERROR);
+ * 构建错误信息
+ * @param ex
+ * @return
+ */
+private String buildErrorMessage(MethodArgumentNotValidException ex){
+    List<ObjectError> objectErrors = ex.getBindingResult().getAllErrors();
+    StringBuilder messageBuilder = new StringBuilder();
     objectErrors.stream().forEach(error -> {
         if(error instanceof FieldError){
             FieldError fieldError = (FieldError) error;
-            message.append(fieldError.getDefaultMessage()).append(",");
+            messageBuilder.append(fieldError.getDefaultMessage()).append(",");
         }
     });
-    return message.deleteCharAt(message.length()-1).toString();
+    String message  = messageBuilder.deleteCharAt(messageBuilder.length() - 1).toString();
+    log.error(message);
+    return message;
 }
 ```
 
 
 
-方法级别参数 https://www.cnblogs.com/beiyan/p/5946345.html
+由于JSR303提供的注解有限，实际开发过程中校验往往需要结合实际需求，JSR303提供了自定义校验扩展接口
 
-由于JSR303提供的注解有限，实际开发过程中校验往往需要结合实际需求，好在JSR303为我们提供了扩展
+典型的一个请求场景是枚举类型参数，假设用户分为3类: 普通用户，VIP玩家，氪金玩家，分别用1，2，3表示，此时如何校验前端传入的值在范围内，抖机灵的朋友可能会想到@Range，万一是离散的不连续数呢？
 
-自定义校验
+自定义注解类
 
+```java
+import javax.validation.Constraint;
+import javax.validation.Payload;
+import java.lang.annotation.*;
 
+@Documented
+// 指定校验类
+@Constraint(validatedBy = InValidator.class)
+@Target( { ElementType.METHOD, ElementType.FIELD })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface In {
+    String message() default "必须在允许的数值内";
 
+    int[] values();
 
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
+}
+```
+
+注解的校验器
+
+```java
+import com.google.common.collect.Sets;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import java.util.Set;
+
+public class InValidator implements ConstraintValidator<In, Number> {// 校验Number类型 
+	
+	private Set<Integer> inValues;
+
+    @Override
+    public void initialize(In in) { 
+    	inValues = Sets.newHashSet();
+    	int[] arr = in.values();
+    	for(int a : arr){
+    		inValues.add(a);
+    	}
+    }
+
+    @Override
+    public boolean isValid(Number propertyValue, ConstraintValidatorContext cxt) {
+        if(propertyValue==null) {
+            return false;
+        }
+       return inValues.contains(propertyValue.intValue());
+    }
+}
+
+```
+
+[方法级别参数] https://www.cnblogs.com/beiyan/p/5946345.html
 
 至此，生产级别的参数校验才算完成，很多文章写到BindingResult便结束了，人云亦云实在有点可惜，优化无止境，希望还能继续优化代码
 
