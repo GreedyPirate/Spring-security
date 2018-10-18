@@ -123,7 +123,60 @@ mockMvc.perform(post("/user/login")
 
 # Spring boot实践之封装返回体
 
-在实际开发中，一个项目会形成一套统一的返回体接口规范，方便
+在实际开发中，一个项目会形成一套统一的返回体接口规范，常见的结构如下
+
+```json
+{
+    "code": 0,
+    "msg": "SUCCESS",
+    "data": 真正的数据
+}
+```
+
+读者可以根据自己的实际情况封装一个java bean，刑如：
+
+```java
+@Data
+public class ResponseModel<T> {
+    private T data;
+    private Integer code;
+    private String msg;
+}
+```
+
+在spring boot中，会将返回的实体类，通过jackson自动转换成json，通过Spring提供的`ResponseBodyAdvice`接口拦截响应体，便可以实现
+
+```java
+public class ResponseAdvisor implements ResponseBodyAdvice {
+    @Override
+    public boolean supports(MethodParameter methodParameter, Class aClass) {
+        return true;
+    }
+
+    @Override
+    public Object beforeBodyWrite(Object body,
+                                  MethodParameter methodParameter, 
+                                  MediaType mediaType,
+                                  Class aClass, 
+                                  ServerHttpRequest serverHttpRequest, 
+                                  ServerHttpResponse serverHttpResponse) {
+        ResponseModel model = new ResponseModel();
+        model.setCode(0);
+        model.setData(body);
+        model.setMsg("SUCCESS");
+        return model;
+    }
+}
+
+```
+
+这只是一个最初的功能，值得优化的地方有很多，读者应根据自己的情况进行扩展
+
+根据笔者遇到的情况，抛砖引玉一下
+
+1. 是否需要对所以的响应拦截，可以在supports方法中判断
+2. 下载返回的是字节数据，再进行包装必然得不到正确的文件，又该如何去判断
+
 
 
 
@@ -155,15 +208,33 @@ public User login(@RequestBody User user){
 
 这无疑是件让人崩溃的事情，此时作为一个开发人员，你已经意识到需要一个小而美的工具来解决这个问题，你可以去google，去github搜索这类项目，而不是毫无作为，抑或者是自己去造轮子
 
-JSR303规范应运而生，其中比较出名的实现就是Hibernate Validator，接下来我们尝试一个入门例子
+JSR303规范应运而生，其中比较出名的实现就是Hibernate Validator，其中常用的注解有
 
-注解大全
+| 注解                           | 含义                                                         |
+| :----------------------------- | :----------------------------------------------------------- |
+| @NotNUll                       | 值不能为空                                                   |
+| @Null                          | 值必须为空                                                   |
+| @Pattern(regex=)               | 值必须匹配正则表达式                                         |
+| @Size(min=,max=)               | 集合的大小必须在min~max之间，如List，数组                    |
+| @Length(min=,max=)             | 字符串长度                                                   |
+| @Range(min,max)                | 数字的区间范围                                               |
+| @NotBlank                      | 字符串必须有字符                                             |
+| @NotEmpty                      | 集合必须有元素，字符串                                       |
+| @Email                         | 字符串必须是邮箱                                             |
+| @URL                           | 字符串必须是url                                              |
+| @AssertFalse                   | 值必须是false                                                |
+| @AssertTrue                    | 值必须是true                                                 |
+| @DecimalMax(value=,inclusive=) | 值必须小于等于(inclusive=true)/小于(inclusive=false) value属性指定的值。可以注解在字符串类型的属性上 |
+| @DecimalMin(value=,inclusive=) | 值必须大于等于(inclusive=true)/大f (inclusive=false) value属性指定的值。可以注解在字符串类型的属性上 |
+| @Digits(integer-,fraction=)    | 数字格式检查。integer指定整 数部分的最大长度，fraction指定小数部分的最大长度 |
+| @Future                        | 值必须是未来的日期                                           |
+| @Past                          | 值必须是过去的日期                                           |
+| @Max(value=)                   | 值必须小于等于value指定的值。不能注解在字符串类型的属性上    |
+| @Min(value=)                   | 值必须大于等于value指定的值。不能注解在字符串类型的属性上    |
 
-//图片
 
 
-
-有一个User java bean, 为username字段加入@NotBlank注解，注意@NotBlank的包名
+接下来我们尝试一个入门例子,有一个User java bean, 为username字段加入@NotBlank注解，注意@NotBlank的包名
 
 ```java
 import lombok.Data;
@@ -220,12 +291,59 @@ public void testBlankName() throws Exception {
 
 此时我们发现已经进入方法断点
 
-//图片
+![进入断点](/Users/admin/Pictures/斗/QQ20181018-2.png)
 
 继续优化，想必大家也发现了，难道每个方法都要写`if`? 当然不用，ControllerAdvice不是专门封装错误信息的吗，根据[Spring boot实践之异常处理]()，我们很容易写出以下代码
 
 ```java
+@ExceptionHandler({BindException.class})
+@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+public ResponseModel exception(BindException ex) {
+    ResponseModel model = new ResponseModel();
+    model.setData(null);
+    model.setCode(HttpStatus.BAD_REQUEST.value());
+    model.setMsg(buildErrorMessage(ex));
+    String classname = ex.getClass().getSimpleName();
+    log.error("{} is occured, message is {}",classname, ex.getMessage());
+    return model;
+}
 
+@ExceptionHandler({MethodArgumentNotValidException.class})
+@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+public ResponseModel exception(MethodArgumentNotValidException ex) {
+    ResponseModel model = new ResponseModel();
+    model.setData(null);
+    model.setCode(HttpStatus.BAD_REQUEST.value());
+    model.setMsg(buildErrorMessage(ex));
+    String classname = ex.getClass().getSimpleName();
+    log.error("{} is occured, message is {}",classname, ex.getMessage());
+    return model;
+}
+
+
+private String buildErrorMessage(BindException ex){
+    return buildObjectErrorMessage(ex.getAllErrors());
+}
+
+private String buildErrorMessage(MethodArgumentNotValidException ex){
+    return buildObjectErrorMessage(ex.getBindingResult().getAllErrors());
+}
+
+/**
+     * 构建错误信息
+     * @param objectErrors
+     * @return
+     */
+private String buildObjectErrorMessage(List<ObjectError> objectErrors){
+    StringBuilder message = new StringBuilder(PREFIX_ERROR);
+    objectErrors.stream().forEach(error -> {
+        if(error instanceof FieldError){
+            FieldError fieldError = (FieldError) error;
+            message.append(fieldError.getDefaultMessage()).append(",");
+        }
+    });
+    return message.deleteCharAt(message.length()-1).toString();
+}
 ```
 
 
