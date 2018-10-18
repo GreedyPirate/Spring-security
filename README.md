@@ -373,11 +373,15 @@ public User login(@RequestBody User user){
 }
 ```
 
-如果还有n个接口需要校验username，你可能会抽取`if`语句到一个方法中，过段时间你又会发现，不光要校验username，还要password，adress等等一堆字段。
+如果还有n个接口需要校验username，你可能会抽取`if`语句到一个方法中，过段时间你又会发现，不光要校验username，还要password，adress等等一堆字段，总结起来
+
+1. 重复劳动
+2. 代码冗长，不利于阅读业务逻辑
+3. 出现问题要去不同的接口中查看校验逻辑
 
 这无疑是件让人崩溃的事情，此时作为一个开发人员，你已经意识到需要一个小而美的工具来解决这个问题，你可以去google，去github搜索这类项目，而不是毫无作为，抑或者是自己去造轮子
 
-JSR303规范应运而生，其中比较出名的实现就是Hibernate Validator，其中`javax.validation.constraints`包下常用的注解有
+JSR303规范应运而生，其中比较出名的实现就是Hibernate Validator，已包含在`spring-boot-starter-web`其中,不需要重新引入，`javax.validation.constraints`包下常用的注解有
 
 | 注解                           | 含义                                                         |
 | :----------------------------- | :----------------------------------------------------------- |
@@ -401,6 +405,8 @@ JSR303规范应运而生，其中比较出名的实现就是Hibernate Validator�
 | @Max(value=)                   | 值必须小于等于value指定的值。不能注解在字符串类型的属性上    |
 | @Min(value=)                   | 值必须大于等于value指定的值。不能注解在字符串类型的属性上    |
 | ...                            | ...                                                          |
+
+`org.hibernate.validator.constraints`
 
 
 
@@ -470,7 +476,6 @@ public void testBlankName() throws Exception {
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public ResponseModel exception(MethodArgumentNotValidException ex) {
     ResponseModel model = new ResponseModel();
-    model.setData(null);
     model.setCode(HttpStatus.BAD_REQUEST.value());
     model.setMsg(buildErrorMessage(ex));
     return model;
@@ -519,6 +524,7 @@ public @interface In {
 
     int[] values();
 
+    // 用于分组校验
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
@@ -558,25 +564,6 @@ public class InValidator implements ConstraintValidator<In, Number> {// 校验Nu
 
 ```
 
-[方法级别参数] https://www.cnblogs.com/beiyan/p/5946345.html
-
 至此，生产级别的参数校验才算完成，很多文章写到BindingResult便结束了，人云亦云实在有点可惜，优化无止境，希望还能继续优化代码
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# 
-
 
 

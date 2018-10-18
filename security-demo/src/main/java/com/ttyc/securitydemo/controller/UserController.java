@@ -3,12 +3,16 @@ package com.ttyc.securitydemo.controller;
 import com.ttyc.securitydemo.error.ServiceException;
 import com.ttyc.securitydemo.error.UserError;
 import com.ttyc.securitydemo.model.User;
+import com.ttyc.securitydemo.validator.NewUser;
+import com.ttyc.securitydemo.validator.RMBUser;
+import com.ttyc.securitydemo.validator.UserValidOrder;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.groups.Default;
 
 @RestController
 @RequestMapping("user")
@@ -33,6 +37,11 @@ public class UserController {
 
     @PostMapping("login")
     public User login(@Valid @RequestBody User user){
+        return user;
+    }
+
+    @PostMapping("order")
+    public User superUser(@Validated(UserValidOrder.class) @RequestBody User user){
         return user;
     }
 

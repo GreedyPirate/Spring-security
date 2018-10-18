@@ -1,4 +1,4 @@
-package com.ttyc.securitydemo.model;
+package com.ttyc.securitydemo.validator;
 
 public interface RMBUser {
 }

@@ -90,6 +90,18 @@ public class SecurityDemoApplicationTests {
         System.out.println(result);
     }
 
+
+    @Test
+    public void testOrder() throws Exception {
+        String params = "{\"id\": 101,\"username\": \"51\",\"password\": \"\",\"type\": \"5\"}";
+        String result = mockMvc.perform(post("/user/order")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(params))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(result);
+    }
+
     @Test
     public void testError() throws Exception {
         String result =
