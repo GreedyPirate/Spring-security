@@ -6,6 +6,7 @@ import com.ttyc.securitydemo.validator.RMBUser;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.groups.Default;
 
 @Data

@@ -90,11 +90,20 @@ public class SecurityDemoApplicationTests {
         System.out.println(result);
     }
 
+    @Test
+    public void testError() throws Exception {
+        String result =
+                mockMvc.perform(get("/user/error"))
+                        .andExpect(status().isInternalServerError())
+                        .andReturn().getResponse().getContentAsString();
+        System.out.println(result);
+    }
+
 
     @Test
-    public void testOrder() throws Exception {
-        String params = "{\"id\": 101,\"username\": \"51\",\"password\": \"\",\"type\": \"5\"}";
-        String result = mockMvc.perform(post("/user/order")
+    public void testNormal() throws Exception {
+        String params = "{\"id\": 101,\"username\": \"tom\",\"password\": \"\",\"type\": \"5\"}";
+        String result = mockMvc.perform(post("/user/normal")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(params))
                 .andExpect(status().isBadRequest())
@@ -103,13 +112,15 @@ public class SecurityDemoApplicationTests {
     }
 
     @Test
-    public void testError() throws Exception {
-        String result =
-                mockMvc.perform(get("/user/error"))
-                        //预期的相应码是200-ok
-                        .andExpect(status().isInternalServerError())
-                        //获取响应体
-                        .andReturn().getResponse().getContentAsString();
+    public void testRMB() throws Exception {
+        String params = "{\"id\": 101,\"username\": \"tom\",\"password\": \"\",\"type\": \"5\"}";
+        String result = mockMvc.perform(post("/user/rmb")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(params))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
         System.out.println(result);
     }
+
+
 }

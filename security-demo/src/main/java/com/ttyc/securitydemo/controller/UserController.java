@@ -31,6 +31,8 @@ public class UserController {
     @GetMapping("info")
     public User getInfo(@RequestParam(name = "name", required = true) String username){
         User user = new User();
+        user.setId(101L);
+        user.setPassword("1234");
         user.setUsername(username.concat("s"));
         return user;
     }
@@ -40,10 +42,16 @@ public class UserController {
         return user;
     }
 
-    @PostMapping("order")
-    public User superUser(@Validated(UserValidOrder.class) @RequestBody User user){
+    @PostMapping("normal")
+    public User normal(@Validated({NewUser.class}) @RequestBody User user){
         return user;
     }
+
+    @PostMapping("rmb")
+    public User rmb(@Validated({RMBUser.class}) @RequestBody User user){
+        return user;
+    }
+
 
     @GetMapping("error")
     public boolean error(){

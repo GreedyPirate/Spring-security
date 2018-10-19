@@ -1,6 +1,12 @@
+
+
 # Spring boot实践之编写接口测试用例
 
-首先需要提到的是[测试用例的重要性](https://blog.csdn.net/lyhdream/article/details/41152189),对我们开发者降低bug率,方便回归测试都有十分重要的意义，而在Spring boot项目中编写测试用例十分简单，通常建立一个Spring boot项目都会test目录下生成一个Test类，本文介绍如何使用`MockMvc`编写测试用例
+>  测试用例对开发者降低bug率,方便测试人员回归测试有十分重要的意义。
+
+
+
+本文介绍如何使用`MockMvc`编写测试用例. 在Spring boot项目中编写测试用例十分简单，通常建立一个Spring boot项目都会test目录下生成一个Test类
 
 ```java
 @RunWith(SpringRunner.class)
@@ -27,7 +33,7 @@ public class User {
 }
 ```
 
-`query方法是一个restful接口，模拟查询用户详情, 并且使用正则校验id必须是数字
+getInfo方法是一个restful接口，模拟查询用户详情
 
 ```java
 @RestController
@@ -37,7 +43,7 @@ public class UserController {
     @GetMapping("info")
     public User getInfo(@RequestParam(name = "name", required = true) String username){
         User user = new User();
-        user.setUsername(username.concat("s"));
+        user.setUsername(username + "s");
         return user;
     }
 }
@@ -45,7 +51,7 @@ public class UserController {
 
 
 
-以下通过MockMvc对象，测试`/user/{id}`请求是否成功，并符合预期
+以下通过MockMvc对象，测试`/user/info}`请求是否成功，并符合预期
 
 ```java
 import com.alibaba.fastjson.JSONObject;
@@ -91,7 +97,7 @@ public class SecurityDemoApplicationTests {
                         .param("name", "jay"))
                         //预期的相应码是200-ok
                         .andExpect(status().isOk())
-                        //预期的id值为101
+                        //预测username的值为jays
                         .andExpect(jsonPath("$.username").value("jays"))
                         //获取响应体
                         .andReturn().getResponse().getContentAsString();
@@ -102,15 +108,19 @@ public class SecurityDemoApplicationTests {
 
 最终输出响应体
 
-```
-{"id":101,"username":"jay","password":"1234"}
+```json
+{
+	"id": 101,
+	"username": "jays",
+	"password": "1234"
+}
 ```
 
 关于`$.id`jsonpath的使用，参考[JsonPath](https://github.com/json-path/JsonPath)
 
 同时付一段使用json参数的post请求方式，大同小异，
 
-```
+```java
 String params = "{\"id\": 101,\"username\": \"jason\",\"password\": \"1234\"}";
 mockMvc.perform(post("/user/login")
         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -175,8 +185,8 @@ public class ResponseAdvisor implements ResponseBodyAdvice {
 
 根据笔者遇到的情况，抛砖引玉一下
 
-1. 是否需要对所以的响应拦截，可以在supports方法中判断
-2. 下载返回的是字节数据，再进行包装必然得不到正确的文件，又该如何去判断
+1. 是否需要对所有的响应拦截，可以在supports方法中判断
+2. 下载返回的是字节数据，再进行包装必然得不到正确的文件
 
 
 
@@ -207,7 +217,7 @@ public interface ExceptionEntity {
 }
 ```
 
-以用户模块为例，所有用户相关的业务信息封装到`UserError`中
+以用户模块为例，所有用户相关的业务异常信息封装到`UserError`中，例如用户不存在，密码错误
 
 ```java
 public enum UserError implements ExceptionEntity {
@@ -240,13 +250,13 @@ public enum UserError implements ExceptionEntity {
 
 ```
 
-需要注意的地方是笔者定义了一个`MODULE`字段，10000表示用户微服务，这样在拿到错误信息之后，可以很快定位报错的应用
+需要注意的地方是笔者定义了一个`MODULE`字段，10000代表用户微服务，这样在拿到错误信息之后，可以很快定位报错的应用
 
 自定义异常
 
 ```java
 @Data
-// 自动生成构造方法
+// lombok自动生成构造方法
 @AllArgsConstructor
 public class ServiceException extends RuntimeException{
     ExceptionEntity error;  
@@ -255,13 +265,13 @@ public class ServiceException extends RuntimeException{
 
 需要说明的是错误接口与自定义异常属于公共模块，而`UserError`属于用户服务
 
-这样做了之后，便可以抛出异常
+之后，便可以抛出异常
 
 ```java
 throw new ServiceException(UserError.ERROR_PASSWORD);
 ```
 
-目前来看，我们只是较为优雅的封装了异常，此时请求接口返回的是Spring boot默认的错误体
+目前来看，我们只是较为优雅的封装了异常，此时请求接口返回的仍然是Spring boot默认的错误体，没有错误信息
 
 ```java
 {
@@ -319,20 +329,21 @@ public class ControllerExceptionAdvisor{
 
 具有争议的一点是捕获`ServiceExcption`之后，应该返回200还是500的响应码，有的公司返回200，使用`code`字段判断成功失败，这完全没有问题，但是按照Restful的开发风格，这里的`@ResponseStatus`笔者返回了500，请读者根据自身情况返回响应码
 
-测试接口与测试用例
+### 测试接口与测试用例 
 
-测试接口
+#### 测试接口
 
 ```java
     @GetMapping("error")
     public boolean error(){
+        // 抛出业务异常示例
         throw new ServiceException(UserError.NO_SUCH_USER);
     }
 ```
 
 
 
-测试用例
+#### 测试用例
 
 ```java
     @Test
@@ -406,8 +417,6 @@ JSR303规范应运而生，其中比较出名的实现就是Hibernate Validator�
 | @Min(value=)                   | 值必须大于等于value指定的值。不能注解在字符串类型的属性上    |
 | ...                            | ...                                                          |
 
-`org.hibernate.validator.constraints`
-
 
 
 接下来我们尝试一个入门例子,有一个User java bean, 为username字段加入@NotBlank注解，注意@NotBlank的包名
@@ -467,9 +476,9 @@ public void testBlankName() throws Exception {
 
 此时我们发现已经进入方法断点
 
-![进入断点](/Users/admin/Pictures/斗/QQ20181018-2.png)
+![进入断点](https://ws3.sinaimg.cn/large/006tNbRwly1fwdk366fb4j30s002eglr.jpg)
 
-继续优化，想必大家也发现了，难道每个方法都要写`if`? 当然不用，ControllerAdvice不就是专门封装错误信息的吗，根据[Spring boot实践之异常处理]()，我们很容易写出以下代码
+继续优化，想必大家也发现了，难道每个方法都要写`if`? 当然不用，ControllerAdvice不就是专门封装错误信息的吗，仿照[异常处理]()中的处理方式，我们很容易写出以下代码
 
 ```java
 @ExceptionHandler({MethodArgumentNotValidException.class})
@@ -500,6 +509,8 @@ private String buildErrorMessage(MethodArgumentNotValidException ex){
     return message;
 }
 ```
+
+除了使用`@ExceptionHandler`来捕获`MethodArgumentNotValidException`以外，还可以覆盖`ResponseEntityExceptionHandler`抽象类的handleMethodArgumentNotValid方法，但是二者不可以混用
 
 
 
@@ -564,6 +575,98 @@ public class InValidator implements ConstraintValidator<In, Number> {// 校验Nu
 
 ```
 
-至此，生产级别的参数校验才算完成，很多文章写到BindingResult便结束了，人云亦云实在有点可惜，优化无止境，希望还能继续优化代码
+至此，生产级别的参数校验基本完成
+
+
+
+扩展
+
+分组校验
+
+在不同接口中，指定不同的校验规则，如：
+
+1. 不同的接口，校验不同的字段
+2. 同一个字段，在不同的接口中有不同的校验规则
+
+以下实现第一种情况
+
+
+
+首先定义两个空接口，代表不同的分组，也就是不同的业务
+
+```java
+public interface NewUser { }
+public interface RMBUser { }
+```
+
+在指定校验规则时，指定分组
+
+```java
+public class User {
+	// 省略...
+    @NotBlank(groups = {NewUser.class}, message = "请输入密码")   
+    private String password;
+
+    @In(groups = {RMBUser.class}, values = {1,2,3}, message = "非法的用户类型")
+    private Integer type;
+}
+
+```
+
+不同的接口指定不同的校验分组
+
+```java
+// 省略类定义...
+@PostMapping("normal")
+public User normal(@Validated({NewUser.class}) @RequestBody User user){
+    return user;
+}
+
+@PostMapping("rmb")
+public User rmb(@Validated({RMBUser.class}) @RequestBody User user){
+    return user;
+}
+```
+
+编写测试用例
+
+只检验密码
+
+```java
+	@Test
+    public void testNormal() throws Exception {
+        String params = "{\"id\": 101,\"username\": \"tom\",\"password\": \"\",\"type\": \"5\"}";
+        String result = mockMvc.perform(post("/user/normal")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(params))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(result);
+    }
+```
+
+输出：`{"data":null,"code":400,"msg":"请输入密码"}`
+只检验用户类型
+
+```java
+	@Test
+    public void testRMB() throws Exception {
+        String params = "{\"id\": 101,\"username\": \"tom\",\"password\": \"\",\"type\": \"5\"}";
+        String result = mockMvc.perform(post("/user/rmb")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(params))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(result);
+    }
+```
+
+输出：`{"data":null,"code":400,"msg":"非法的用户类型"}`
+
+
+
+
+
+
 
 

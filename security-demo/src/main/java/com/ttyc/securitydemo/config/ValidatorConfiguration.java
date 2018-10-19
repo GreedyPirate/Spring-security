@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-@Configuration
+//@Configuration
 public class ValidatorConfiguration {
     @Bean
     public Validator validator(){
