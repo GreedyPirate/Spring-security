@@ -781,7 +781,7 @@ Encoded password does not look like BCrypt
 此时请求test流程
 先调整到自定义的登录页，登录成功后看到返回结果
 
-
+真正的请求是test，它是rest请求，万一输入的某一个html页面呢，应该按情况返回
 
 
 
