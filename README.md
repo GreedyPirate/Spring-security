@@ -695,7 +695,7 @@ formLogin：自定义登录表单，拦截器为UsernamePasswordAuthenticationFi
 
 3.ExceptionTranslationFilter 发生AccessDeniedException，AuthenticationException异常时，由他处理
 
-4.FilterSecurityInterceptor 最后的判断
+4.FilterSecurityInterceptor 最后的判断,根据config方法的配置判断
 
 
 
@@ -721,6 +721,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
 #### 第一步：
 
 使用form表单认证，输入根路径，一次/，一次/favicon.ico
+因为/ 既没有请求头，也没有username参数，所以先进FilterSecurityInterceptor
 
 但是"/"没有被permit，所以还是会进ExceptionTranslationFilter,最终进入默认的重定向页面"/login"
 
@@ -755,6 +756,30 @@ debug出来的顺序：
    1.1 setDetails(request, authRequest); 把request放进UsernamePasswordAuthenticationToken
 
 2. 
+
+
+# Spring Security(二)：自定义用户认证逻辑
+
+用户登录步骤：
+1. 根据用户提交的username，从数据库中查询
+2. 将用户提交的密码，和查询出来的密码对比
+
+查看com.ttyc.security.browser.security.UserDetailServiceImplementation类
+警告是因为spring security觉得密码没加密
+Encoded password does not look like BCrypt
+
+此时访问http://localhost:8090/test的步骤
+1. 首先重定向到/login，输入账号密码
+2. 登录失败，重复第一步
+3. 登录成功，则真正请求到了/test
+
+自定义表单注意点
+1. 可以修改默认登录页面：loginPage("/sg-login.html")，但是要请求放行，即permitAll；登录必须是post请求
+2. 可以修改默认的处理接口login：loginProcessingUrl("/deal-login")，页面的提交接口也要改成这个
+也就是说默认的登录页面，还要登录接口也是默认的，要改也是改名字，不用自己实现
+
+此时请求test流程
+先调整到自定义的登录页，登录成功后看到返回结果
 
 
 
