@@ -19,9 +19,12 @@
     </parent>
 
     <modules>
-        <module>security-app</module>
-        <module>security-browser</module>
+        <!-- 核心模块 -->
         <module>security-core</module>
+        <!-- 浏览器客户端 -->
+        <module>security-browser</module>
+        <!-- app端 -->
+        <module>security-app</module>
         <module>security-demo</module>
     </modules>
 

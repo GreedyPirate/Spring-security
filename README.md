@@ -665,6 +665,120 @@ public User rmb(@Validated({RMBUser.class}) @RequestBody User user){
 
 
 
+# Spring boot实践之异步编程
+
+
+
+
+
+# Spring Security(一)：起步
+
+
+
+配置：继承WebSecurityConfigurerAdapter
+
+
+
+http basic：一个默认表单(浏览器自带？)，拦截器为BasicAuthenticationFilter，判断请求头有Authorization:Basic
+
+formLogin：自定义登录表单，拦截器为UsernamePasswordAuthenticationFilter，判断参数包含username，password
+
+
+
+拦截器顺序
+
+1.UsernamePasswordAuthenticationFilter
+
+2.BasicAuthenticationFilter
+
+...
+
+3.ExceptionTranslationFilter 发生AccessDeniedException，AuthenticationException异常时，由他处理
+
+4.FilterSecurityInterceptor 最后的判断
+
+
+
+第一版配置：
+
+```
+@Configuration
+public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+//                .httpBasic() // basic认证
+                .formLogin()
+                .and()
+                .authorizeRequests() //
+                .anyRequest() //所有的请求
+                .authenticated(); // 指定url可以被所有已认证用户访问
+    }
+}
+```
+
+#### 第一步：
+
+使用form表单认证，输入根路径，一次/，一次/favicon.ico
+
+但是"/"没有被permit，所以还是会进ExceptionTranslationFilter,最终进入默认的重定向页面"/login"
+
+debug出来的顺序：
+
+1. FilterSecurityInterceptor
+
+2. ExceptionTranslationFilter#handleSpringSecurityException
+
+   2.1 exception instanceof AccessDeniedException
+
+3. LoginUrlAuthenticationEntryPoint#commence 
+
+   3.1 LoginUrlAuthenticationEntryPoint的作用：ExceptionTranslationFilter用它开启一个由UsernamePasswordAuthenticationFilter认证的登录表单，
+
+   通过loginFormUrl来设置登录表单url，可以使绝对，也可以是先对路径，用于重定向到登录页面
+
+   如果是相对路径：原来的请求是http，通过设置forceHttps为true，认证之后还能访问http请求
+
+4. 默认的重定向DefaultRedirectStrategy#sendRedirect
+
+#### 第二步：
+
+![](https://ws2.sinaimg.cn/large/006tNbRwly1fwhb0kdwgnj30ku07gwf5.jpg)
+
+点击登录
+
+执行顺序
+
+1. UsernamePasswordAuthenticationFilter#attemptAuthentication
+
+   1.1 setDetails(request, authRequest); 把request放进UsernamePasswordAuthenticationToken
+
+2. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
