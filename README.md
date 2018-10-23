@@ -793,6 +793,11 @@ UnauthorizedUserController的作用到底是什么？
 1. test作为一个rest接口，未认证的时候凭什么要"重定向"到登录页面，该做什么应该返回一个json让前端决定
 2. html请求重定向到一个页面即可，这个页面url默认是基础模块的sg-login.html，每个应用服务可以通过i-security.browser.login-page自定义
 
+登录之后只是跳转，应该返回用户信息
+登录成功和失败的处理器
+.successHandler(authSuccessHandler)
+.failureHandler(authFailHandler)
+
 
 
 
