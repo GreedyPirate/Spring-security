@@ -1,9 +1,11 @@
 package com.ttyc.security.browser.config;
 
 import com.ttyc.security.browser.security.UserDetailServiceImplementation;
+import com.ttyc.security.core.config.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -17,13 +19,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@EnableWebSecurity
+@EnableConfigurationProperties(SecurityProperties.class)
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Bean
-    public UserDetailsService userDetailsService(){
+    public UserDetailsService userService(){
         return new UserDetailServiceImplementation();
     }
+
+    @Autowired
+    private SecurityProperties securityProperties;
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -34,18 +39,22 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        String defaultLoginUrl = securityProperties.getBrowser().getLoginPage();
+
         http
 //                .httpBasic()
                 // basic认证
                 .formLogin()
                 //默认登录url
-                .loginPage("/sg-login.html")
+                // 重定义，判断请求类型
+                .loginPage("access/authorize")
                 //处理登录的接口,默认是/login，参考UsernamePasswordAuthenticationFilter
-                .loginProcessingUrl("/deal-login")
+                //.loginProcessingUrl("/deal-login")
+                .loginPage(defaultLoginUrl)
                 .and()
                 .userDetailsService(userDetailsService())
                 .authorizeRequests()
-                .antMatchers("/sg-login.html").permitAll()
+                .antMatchers(defaultLoginUrl,"access/authorize").permitAll()
                 //所有的请求
                 .anyRequest()
                 // 指定url可以被所有已认证用户访问

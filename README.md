@@ -781,22 +781,17 @@ Encoded password does not look like BCrypt
 此时请求test流程
 先调整到自定义的登录页，登录成功后看到返回结果
 
-真正的请求是test，它是rest请求，万一输入的某一个html页面呢，应该按情况返回
 
 
+真正的请求是test，它是rest请求，万一输入的某一个html页面呢，应该按情况返回,即
 
+1. rest请求返回一段json，提示前端引导用户到登录页面
+2. html请求重定向到登录页面
 
-
-
-
-
-
-
-
-
-
-
-
+UnauthorizedUserController的作用到底是什么？
+前提：资源分为路由和api，test是api，html页面是路由
+1. test作为一个rest接口，未认证的时候凭什么要"重定向"到登录页面，该做什么应该返回一个json让前端决定
+2. html请求重定向到一个页面即可，这个页面url默认是基础模块的sg-login.html，每个应用服务可以通过i-security.browser.login-page自定义
 
 
 

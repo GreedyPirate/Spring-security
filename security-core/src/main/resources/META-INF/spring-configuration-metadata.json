@@ -1,0 +1,18 @@
+{
+  "groups": [
+    {
+      "sourceType": "com.ttyc.security.core.config.BrowserProperties",
+      "name": "i-security.browser",
+      "type": "com.ttyc.security.core.config.BrowserProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "i-security.browser.login-page",
+      "type": "java.lang.String",
+      "description": "登录页面地址，没有使用默认/sg-login.html",
+      "defaultValue": "/sg-login.html"
+    }
+  ]
+}
+

@@ -3,3 +3,6 @@ spring:
     store-type: none
 server:
   port: 8090
+i-security:
+  browser:
+    login-page: /sg-login.html
