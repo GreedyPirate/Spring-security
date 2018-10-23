@@ -12,6 +12,11 @@
       "type": "java.lang.String",
       "description": "登录页面地址，没有使用默认/sg-login.html",
       "defaultValue": "/sg-login.html"
+    },
+    {
+      "name": "i-security.browser.login-type",
+      "type": "java.lang.String",
+      "description": "登录请求方式"
     }
   ]
 }

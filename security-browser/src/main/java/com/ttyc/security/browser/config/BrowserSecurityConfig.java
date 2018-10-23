@@ -30,8 +30,13 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
     @Autowired
     private SecurityProperties securityProperties;
 
+    @Autowired
+    private AuthSuccessHandler authSuccessHandler;
+
+    @Autowired
+    private AuthFailHandler authFailHandler;
+
     @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
     @ConditionalOnMissingBean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -50,10 +55,13 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
                 .loginPage("access/authorize")
                 //处理登录的接口,默认是/login，参考UsernamePasswordAuthenticationFilter
                 //.loginProcessingUrl("/deal-login")
-                .loginPage(defaultLoginUrl)
+                .loginProcessingUrl("/deal-login")
+                .successHandler(authSuccessHandler)
+                .failureHandler(authFailHandler)
                 .and()
                 .userDetailsService(userDetailsService())
                 .authorizeRequests()
+                // defaultLoginUrl 用户自定义的登录页面也不需要拦截
                 .antMatchers(defaultLoginUrl,"access/authorize").permitAll()
                 //所有的请求
                 .anyRequest()

@@ -6,4 +6,6 @@ import lombok.Data;
 public class BrowserProperties {
 
     private String loginPage = "sg-login.html";
+
+    private LoginRequestType loginType;
 }

@@ -1,8 +1,10 @@
 package com.ttyc.security.browser.security;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ttyc.security.core.config.SecurityProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
@@ -26,6 +28,9 @@ public class UnauthorizedUserController {
 
     RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
+    @Autowired
+    SecurityProperties securityProperties;
+
     @RequestMapping("access/authorize")
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public JSONObject guide(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -35,7 +40,8 @@ public class UnauthorizedUserController {
         if (savedRequest != null) {
             String targetUrl = savedRequest.getRedirectUrl();
             if (StringUtils.endsWith(targetUrl, ".html")) {
-                redirectStrategy.sendRedirect(request, response, "");
+                // 重定向到配置的登录页
+                redirectStrategy.sendRedirect(request, response, securityProperties.getBrowser().getLoginPage());
             }
         }
 

@@ -3,3 +3,6 @@ server:
 spring:
   session:
     store-type: none
+i-security:
+  browser:
+    login-page: demo-login.html
