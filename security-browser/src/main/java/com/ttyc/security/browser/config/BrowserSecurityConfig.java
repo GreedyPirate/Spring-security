@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
+@EnableWebSecurity
 @EnableConfigurationProperties(SecurityProperties.class)
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
 
@@ -50,9 +51,9 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
 //                .httpBasic()
                 // basic认证
                 .formLogin()
-                //默认登录url
+                //默认登录url，第一个 / 必须有，否则报错isn't a valid redirect URL
                 // 重定义，判断请求类型
-                .loginPage("access/authorize")
+                .loginPage("/access/authorize")
                 //处理登录的接口,默认是/login，参考UsernamePasswordAuthenticationFilter
                 //.loginProcessingUrl("/deal-login")
                 .loginProcessingUrl("/deal-login")
@@ -62,7 +63,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter{
                 .userDetailsService(userDetailsService())
                 .authorizeRequests()
                 // defaultLoginUrl 用户自定义的登录页面也不需要拦截
-                .antMatchers(defaultLoginUrl,"access/authorize").permitAll()
+                .antMatchers(defaultLoginUrl,"/access/authorize").permitAll()
                 //所有的请求
                 .anyRequest()
                 // 指定url可以被所有已认证用户访问
