@@ -1,10 +1,10 @@
 package com.ttyc.security.demo.controller;
 
+import com.ttyc.security.demo.error.ServiceException;
+import com.ttyc.security.demo.error.UserError;
 import com.ttyc.security.demo.model.User;
 import com.ttyc.security.demo.validator.NewUser;
 import com.ttyc.security.demo.validator.RMBUser;
-import com.ttyc.security.demo.error.ServiceException;
-import com.ttyc.security.demo.error.UserError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;

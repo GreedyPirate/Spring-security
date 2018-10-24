@@ -1,7 +1,7 @@
 package com.ttyc.security.demo.model;
 
-import com.ttyc.security.demo.validator.NewUser;
 import com.ttyc.security.demo.validator.In;
+import com.ttyc.security.demo.validator.NewUser;
 import com.ttyc.security.demo.validator.RMBUser;
 import lombok.Data;
 

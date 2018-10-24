@@ -1,10 +1,8 @@
 package com.ttyc.security.core.config;
 
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Data
 @ConfigurationProperties("i-security")
