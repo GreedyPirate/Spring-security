@@ -800,6 +800,14 @@ UnauthorizedUserController的作用到底是什么？
 
 
 
+表单登录的认证流程
+
+1.UsernamePasswordAuthenticationFilter
+
+
+
+
+
 
 
 

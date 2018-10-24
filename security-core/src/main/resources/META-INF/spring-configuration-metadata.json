@@ -1,4 +1,22 @@
 {
+  "hint":[
+    {
+      "values": [
+        {
+          "value": "JSON"
+        },
+        {
+          "value": "REDIRECT"
+        }
+      ],
+      "name": "i-security.browser.login-type",
+      "providers": [
+        {
+          "name": "com.ttyc.security.core.config.LoginRequestType"
+        }
+      ]
+    }
+  ],
   "groups": [
     {
       "sourceType": "com.ttyc.security.core.config.BrowserProperties",
