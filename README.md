@@ -796,24 +796,6 @@ UnauthorizedUserController的作用到底是什么？
 登录之后只是跳转，应该返回用户信息
 登录成功和失败的处理器
 .successHandler(authSuccessHandler)
-.failureHandler(authFailHandler)
-
-
-
-表单登录的认证流程
-
-1.UsernamePasswordAuthenticationFilter
-
-
-
-
-
-
-
-
-
-
-
-
+.failureHandler(authFailHandler
 
 
