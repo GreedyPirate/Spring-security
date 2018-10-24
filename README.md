@@ -796,6 +796,11 @@ UnauthorizedUserController的作用到底是什么？
 登录之后只是跳转，应该返回用户信息
 登录成功和失败的处理器
 .successHandler(authSuccessHandler)
-.failureHandler(authFailHandler
+.failureHandler(authFailHandler)
+
+Spring MVC工具类
+1. 重定向工具类RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+2. request工具类ServletRequestUtils
+3. request包装类ServletWebRequest
 
 

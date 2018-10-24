@@ -35,6 +35,12 @@
       "name": "i-security.browser.login-type",
       "type": "java.lang.String",
       "description": "登录请求方式"
+    },
+    {
+      "name": "i-security.browser.remeberme-time",
+      "type": "int",
+      "description": "remeberme的有效时间",
+      "defaultValue": 3600
     }
   ]
 }

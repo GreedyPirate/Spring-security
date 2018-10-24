@@ -13,6 +13,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
@@ -20,7 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
 
     @Autowired
     private SecurityProperties securityProperties;
@@ -31,34 +36,49 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthFailHandler authFailHandler;
 
+    @Autowired
+    private DataSource dataSource;
+
     @Bean
     @ConditionalOnMissingBean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    public PersistentTokenRepository tokenRepository(){
+        JdbcTokenRepositoryImpl repository = new JdbcTokenRepositoryImpl();
+        repository.setDataSource(dataSource);
+        repository.setCreateTableOnStartup(true);
+        return repository;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         String defaultLoginUrl = securityProperties.getBrowser().getLoginPage();
-
+        int remeberMeTime = securityProperties.getBrowser().getRemebermeTime();
         http
+                //添加自定义过滤器，并指定位置
+//                .addFilterBefore(MyFilter,UsernamePasswordAuthenticationFilter.class)
 //                .httpBasic()
                 // basic认证
                 .formLogin()
-                //表单的参数名
-                .usernameParameter("username")
-                .passwordParameter("password")
-                //默认登录url，第一个 / 必须有，否则报错isn't a valid redirect URL
-                // 重定义，判断请求类型
-                .loginPage("/v2/access/authorize")
-                //处理登录的接口,默认是/login，参考UsernamePasswordAuthenticationFilter
-                .loginProcessingUrl("/deal-login")
-                .failureUrl(defaultLoginUrl)
-                .successHandler(authSuccessHandler)
-                // 失败默认重定向到
-                .failureHandler(authFailHandler)
-                .and()
-                .userDetailsService(userDetailsService())
+                    //表单的参数名
+                    .usernameParameter("username")
+                    .passwordParameter("password")
+                    //默认登录url，第一个 / 必须有，否则报错isn't a valid redirect URL
+                    // 重定义，判断请求类型
+                    .loginPage("/v2/access/authorize")
+                    //处理登录的接口,默认是/login，参考UsernamePasswordAuthenticationFilter
+                    .loginProcessingUrl("/deal-login")
+                    .successHandler(authSuccessHandler)
+                    // 失败默认重定向到
+                    .failureHandler(authFailHandler)
+                    .and()
+                .rememberMe()
+                    .tokenRepository(this.tokenRepository())
+                    .tokenValiditySeconds(remeberMeTime)
+                    .and()
+                .userDetailsService(userDetailsService)
                 .authorizeRequests()
                 // defaultLoginUrl 用户自定义的登录页面也不需要拦截
                 .antMatchers(defaultLoginUrl, "/v2/access/authorize").permitAll()
