@@ -2,7 +2,7 @@ server:
   port: 8088
 spring:
   session:
-    store-type:
-#i-security:
-#  browser:
-#    login-page: demo-login.html
+    store-type: none
+i-security:
+  browser:
+    login-type: REDIRECT
