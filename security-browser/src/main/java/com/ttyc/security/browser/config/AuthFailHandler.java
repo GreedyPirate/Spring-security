@@ -6,6 +6,7 @@ import com.ttyc.security.core.config.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -26,7 +27,7 @@ public class AuthFailHandler extends SimpleUrlAuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         if(securityProperties.getBrowser().getLoginType().equals(LoginRequestType.JSON)) {
-            httpServletResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
             httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             httpServletResponse.getWriter().write(JSON.toJSONString(e));
         }else{

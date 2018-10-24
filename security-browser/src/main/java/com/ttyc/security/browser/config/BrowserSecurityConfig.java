@@ -1,15 +1,11 @@
 package com.ttyc.security.browser.config;
 
-import com.ttyc.security.browser.security.UserDetailServiceImplementation;
 import com.ttyc.security.core.config.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -49,18 +45,23 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .httpBasic()
                 // basic认证
                 .formLogin()
+                //表单的参数名
+                .usernameParameter("username")
+                .passwordParameter("password")
                 //默认登录url，第一个 / 必须有，否则报错isn't a valid redirect URL
                 // 重定义，判断请求类型
-                .loginPage("/access/authorize")
+                .loginPage("/v2/access/authorize")
                 //处理登录的接口,默认是/login，参考UsernamePasswordAuthenticationFilter
                 .loginProcessingUrl("/deal-login")
+                .failureUrl(defaultLoginUrl)
                 .successHandler(authSuccessHandler)
+                // 失败默认重定向到
                 .failureHandler(authFailHandler)
                 .and()
                 .userDetailsService(userDetailsService())
                 .authorizeRequests()
                 // defaultLoginUrl 用户自定义的登录页面也不需要拦截
-                .antMatchers(defaultLoginUrl, "/access/authorize").permitAll()
+                .antMatchers(defaultLoginUrl, "/v2/access/authorize").permitAll()
                 //所有的请求
                 .anyRequest()
                 // 指定url可以被所有已认证用户访问

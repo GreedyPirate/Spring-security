@@ -5,4 +5,5 @@ spring:
     store-type: none
 i-security:
   browser:
-    login-type: REDIRECT
+    login-type: JSON
+    login-page: demo-login.html

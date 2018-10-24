@@ -31,6 +31,14 @@ public class UnauthorizedUserController {
     @Autowired
     SecurityProperties securityProperties;
 
+    /**
+     * 根据原地址类型判断未认证的时候的返回
+     * 想了想没必要，不管访问接口还是页面，都重定向到登录页
+     * @param request
+     * @param response
+     * @return
+     * @throws IOException
+     */
     @RequestMapping("access/authorize")
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public JSONObject guide(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -51,5 +59,12 @@ public class UnauthorizedUserController {
         guideJson.put("msg", "用户未登录，前端根据此信息跳转至登录页");
 
         return guideJson;
+    }
+
+    @RequestMapping("/v2/access/authorize")
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public void v2Guide(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // 重定向到配置的登录页
+        redirectStrategy.sendRedirect(request, response, securityProperties.getBrowser().getLoginPage());
     }
 }
