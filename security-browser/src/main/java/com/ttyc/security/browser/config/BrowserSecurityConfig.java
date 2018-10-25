@@ -45,10 +45,11 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
     public PersistentTokenRepository tokenRepository(){
         JdbcTokenRepositoryImpl repository = new JdbcTokenRepositoryImpl();
         repository.setDataSource(dataSource);
-        repository.setCreateTableOnStartup(true);
+//        repository.setCreateTableOnStartup(true);
         return repository;
     }
 
@@ -77,6 +78,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .rememberMe()
                     .tokenRepository(this.tokenRepository())
                     .tokenValiditySeconds(remeberMeTime)
+                    .userDetailsService(userDetailsService)
                     .and()
                 .userDetailsService(userDetailsService)
                 .authorizeRequests()
