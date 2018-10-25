@@ -74,6 +74,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                     .successHandler(authSuccessHandler)
                     // 失败默认重定向到
                     .failureHandler(authFailHandler)
+                    //表单登录相关不需要认证
+                    .permitAll()
                     .and()
                 .rememberMe()
                     .tokenRepository(this.tokenRepository())
@@ -83,7 +85,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .userDetailsService(userDetailsService)
                 .authorizeRequests()
                 // defaultLoginUrl 用户自定义的登录页面也不需要拦截
-                .antMatchers(defaultLoginUrl, "/v2/access/authorize").permitAll()
+                .antMatchers(defaultLoginUrl).permitAll()
                 //所有的请求
                 .anyRequest()
                 // 指定url可以被所有已认证用户访问
