@@ -49,7 +49,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     public PersistentTokenRepository tokenRepository(){
         JdbcTokenRepositoryImpl repository = new JdbcTokenRepositoryImpl();
         repository.setDataSource(dataSource);
-//        repository.setCreateTableOnStartup(true);
+        repository.setCreateTableOnStartup(true);
         return repository;
     }
 
