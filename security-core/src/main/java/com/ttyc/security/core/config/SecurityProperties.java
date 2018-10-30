@@ -11,6 +11,8 @@ public class SecurityProperties implements InitializingBean {
     // 必须new
     private BrowserProperties browser = new BrowserProperties();
 
+    private SocialProperties social = new SocialProperties();
+
     /**
      * 属性检查
      * @throws Exception

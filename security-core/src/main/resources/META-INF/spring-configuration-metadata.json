@@ -22,6 +22,16 @@
       "sourceType": "com.ttyc.security.core.config.BrowserProperties",
       "name": "i-security.browser",
       "type": "com.ttyc.security.core.config.BrowserProperties"
+    },
+    {
+      "sourceType": "com.ttyc.security.core.config.SocialProperties",
+      "name": "i-security.social.qq",
+      "type": "com.ttyc.security.core.config.SocialProperties"
+    },
+    {
+      "sourceType": "com.ttyc.security.core.config.QQProperties",
+      "name": "i-security.social.qq",
+      "type": "com.ttyc.security.core.config.QQProperties"
     }
   ],
   "properties": [
@@ -41,6 +51,16 @@
       "type": "int",
       "description": "remeberme的有效时间",
       "defaultValue": 3600
+    },
+    {
+      "name": "i-security.social.qq.appId",
+      "type": "java.lang.String",
+      "description": "app Id"
+    },
+    {
+      "name": "i-security.social.qq.appKey",
+      "type": "java.lang.String",
+      "description": "app Key"
     }
   ]
 }

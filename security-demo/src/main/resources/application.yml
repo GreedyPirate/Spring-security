@@ -12,3 +12,7 @@ i-security:
     login-type: JSON
     login-page: demo-login.html
     remeberme-time: 60
+  social:
+    qq:
+      app-id: 1107490316
+      app-key: eJZNcSztQFdbIFlF

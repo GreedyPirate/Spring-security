@@ -10,6 +10,7 @@ import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
 import org.springframework.social.security.AuthenticationNameUserIdSource;
 import org.springframework.social.security.SpringSocialConfigurer;
+import org.springframework.util.Assert;
 
 import javax.sql.DataSource;
 import javax.xml.crypto.Data;
@@ -37,6 +38,8 @@ public class SocialConfig extends SocialConfigurerAdapter{
 
     @Override
     public UserIdSource getUserIdSource() {
+
         return new AuthenticationNameUserIdSource();
+
     }
 }

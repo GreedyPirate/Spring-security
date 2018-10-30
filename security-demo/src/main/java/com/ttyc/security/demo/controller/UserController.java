@@ -5,6 +5,7 @@ import com.ttyc.security.demo.error.UserError;
 import com.ttyc.security.demo.model.User;
 import com.ttyc.security.demo.validator.NewUser;
 import com.ttyc.security.demo.validator.RMBUser;
+import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
@@ -22,6 +23,8 @@ public class UserController {
     @GetMapping("{id:\\d+}")
     public User query(@PathVariable(name = "id", required = true) Long id){
         User user = new User();
+
+        Assert.notNull(user,"user can not be null");
         user.setId(id);
         user.setPassword("1234");
         user.setUsername("jay");
