@@ -13,9 +13,9 @@ import java.util.Map;
  */
 public class QQApiImpl extends AbstractOAuth2ApiBinding implements QQApi {
 
-    private static final String OPEN_ID_URL = "";
+    private static final String OPEN_ID_URL = "https://graph.qq.com/oauth2.0/me?access_token=";
 
-    private static final String USER_INFO_URL = "";
+    private static final String USER_INFO_URL = "https://graph.qq.com/user/get_user_info";
 
     private String appId;
     private String openid;

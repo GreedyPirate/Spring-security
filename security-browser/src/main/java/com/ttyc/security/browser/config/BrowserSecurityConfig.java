@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.social.security.SpringSocialConfigurer;
 
 import javax.sql.DataSource;
 
@@ -39,6 +40,9 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    SpringSocialConfigurer springSocialConfigurer;
+
     @Bean
     @ConditionalOnMissingBean
     public PasswordEncoder passwordEncoder() {
@@ -49,7 +53,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     public PersistentTokenRepository tokenRepository(){
         JdbcTokenRepositoryImpl repository = new JdbcTokenRepositoryImpl();
         repository.setDataSource(dataSource);
-        repository.setCreateTableOnStartup(true);
+//        repository.setCreateTableOnStartup(true);
         return repository;
     }
 
@@ -62,6 +66,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .addFilterBefore(MyFilter,UsernamePasswordAuthenticationFilter.class)
 //                .httpBasic()
                 // basic认证
+                .apply(springSocialConfigurer)
+                    .and()
                 .formLogin()
                     //表单的参数名
                     .usernameParameter("username")

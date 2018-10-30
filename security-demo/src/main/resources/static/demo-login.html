@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <title>demo系统登录</title>
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script>
-        $().ready(function(){
-        })
-    </script>
+    <style>
+        a{
+            width: 20px;
+            height: 20px;
+        }
+    </style>
 </head>
 <body>
     这是接入应用自定义的登录页
@@ -19,5 +21,9 @@
         记住我:<input type="checkbox" name="remember-me" value="true">
         登录<input type="submit">
     </form>
+
+    <h3>qq登录</h3>
+    <!-- url: SocialAuthenticationFilter#/auth, provider-id=qq-->
+    <a href="/auth/qq">登录</a>
 </body>
 </html>
