@@ -8,4 +8,6 @@ public class QQProperties {
     private String appId;
 
     private String appKey;
+
+    private String providerId = "qq";
 }

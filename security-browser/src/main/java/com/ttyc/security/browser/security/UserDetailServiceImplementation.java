@@ -8,6 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.social.security.SocialUser;
+import org.springframework.social.security.SocialUserDetails;
+import org.springframework.social.security.SocialUserDetailsService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,7 +18,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class UserDetailServiceImplementation implements UserDetailsService {
+public class UserDetailServiceImplementation implements UserDetailsService, SocialUserDetailsService {
 
 //    private UserDao userDao;
 
@@ -39,4 +42,17 @@ public class UserDetailServiceImplementation implements UserDetailsService {
     }
 
 
+    /**
+     * 类似上面的
+     * @param userId
+     * @return
+     * @throws UsernameNotFoundException
+     */
+    @Override
+    public SocialUserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
+        SocialUser admin = new SocialUser(userId, passwordEncoder.encode("12345"),
+                true, true, true, true,
+                AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
+        return admin;
+    }
 }
