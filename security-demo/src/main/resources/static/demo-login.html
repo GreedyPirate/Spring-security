@@ -22,8 +22,10 @@
         登录<input type="submit">
     </form>
 
-    <h3>qq登录</h3>
+    <h3>第三方登录</h3>
     <!-- url: SocialAuthenticationFilter#/auth, provider-id=qq-->
-    <a href="/auth/qq">登录</a>
+    <form action="/login/oauth/qq" method="post">
+        <button type="submit">QQ登录</button>
+    </form>
 </body>
 </html>

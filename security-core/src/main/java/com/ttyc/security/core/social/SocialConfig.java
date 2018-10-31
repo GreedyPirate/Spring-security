@@ -43,7 +43,7 @@ public class SocialConfig extends SocialConfigurerAdapter{
     @Bean
     public SpringSocialConfigurer springSocialConfigurer() {
         // 默认配置类，进行组件的组装
-        SpringSocialConfigurer springSocialConfigurer = new SpringSocialConfigurer();
+        SpringSocialConfigurer springSocialConfigurer = new ExSpringSocialConfigurer();
         return springSocialConfigurer;
     }
 

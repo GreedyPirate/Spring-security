@@ -12,7 +12,7 @@ public class QQServiceProvider extends AbstractOAuth2ServiceProvider<QQApi>{
     private String appId;
 
     public QQServiceProvider(String appId, String secret) {
-        super(new OAuth2Template(appId, secret, authorizeUrl,accessTokenUrl));
+        super(new QQOAuth2Template(appId, secret, authorizeUrl,accessTokenUrl));
     }
 
     @Override

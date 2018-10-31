@@ -91,7 +91,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .userDetailsService(userDetailsService)
                 .authorizeRequests()
                 // defaultLoginUrl 用户自定义的登录页面也不需要拦截
-                .antMatchers(defaultLoginUrl).permitAll()
+                .antMatchers(defaultLoginUrl,"/login/oauth/**").permitAll()
                 //所有的请求
                 .anyRequest()
                 // 指定url可以被所有已认证用户访问
