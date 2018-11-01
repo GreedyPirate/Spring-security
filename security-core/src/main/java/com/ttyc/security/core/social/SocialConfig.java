@@ -52,7 +52,8 @@ public class SocialConfig extends SocialConfigurerAdapter{
         JdbcUsersConnectionRepository usersConnectionRepository =
                 new JdbcUsersConnectionRepository(dataSource,connectionFactoryLocator, Encryptors.noOpText());
         usersConnectionRepository.setTablePrefix("i_");
-        return super.getUsersConnectionRepository(connectionFactoryLocator);
+
+        return usersConnectionRepository;
     }
 
     @Override

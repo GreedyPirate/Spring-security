@@ -13,10 +13,11 @@ public class QQServiceProvider extends AbstractOAuth2ServiceProvider<QQApi>{
 
     public QQServiceProvider(String appId, String secret) {
         super(new QQOAuth2Template(appId, secret, authorizeUrl,accessTokenUrl));
+        this.appId = appId;
     }
 
     @Override
     public QQApi getApi(String accessToken) {
-        return new QQApiImpl(appId, accessToken);
+        return new QQApiImpl(this.appId, accessToken);
     }
 }
