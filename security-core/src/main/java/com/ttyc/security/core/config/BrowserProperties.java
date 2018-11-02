@@ -1,10 +1,6 @@
 package com.ttyc.security.core.config;
 
 import lombok.Data;
-import org.springframework.boot.convert.DurationUnit;
-
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 
 @Data
 public class BrowserProperties  {

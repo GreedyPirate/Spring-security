@@ -1,7 +1,6 @@
 package com.ttyc.security.core.social.qq.serverProvider.api;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.social.oauth2.OAuth2Template;
@@ -9,8 +8,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 public class QQOAuth2Template extends OAuth2Template{
 

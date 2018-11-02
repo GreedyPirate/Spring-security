@@ -2,7 +2,6 @@ package com.ttyc.security.core.social.qq.serverProvider.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
