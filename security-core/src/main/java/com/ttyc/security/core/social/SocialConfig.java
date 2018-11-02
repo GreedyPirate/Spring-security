@@ -13,6 +13,7 @@ import org.springframework.social.connect.ConnectionRepository;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
 import org.springframework.social.connect.web.ConnectController;
+import org.springframework.social.connect.web.ProviderSignInUtils;
 import org.springframework.social.security.AuthenticationNameUserIdSource;
 import org.springframework.social.security.SpringSocialConfigurer;
 
@@ -35,7 +36,8 @@ public class SocialConfig extends SocialConfigurerAdapter{
     @Bean
     public SpringSocialConfigurer springSocialConfigurer() {
         // 默认配置类，进行组件的组装
-        SpringSocialConfigurer springSocialConfigurer = new ExSpringSocialConfigurer();
+        SpringSocialConfigurer springSocialConfigurer = new ExSpringSocialConfigurer("/login/oauth");
+        springSocialConfigurer.signupUrl(securityProperties.getBrowser().getSignupPage());
         return springSocialConfigurer;
     }
 
@@ -60,4 +62,8 @@ public class SocialConfig extends SocialConfigurerAdapter{
         return new ConnectController(connectionFactoryLocator, connectionRepository);
     }
 
+    @Bean
+    public ProviderSignInUtils providerSignInUtils(ConnectionFactoryLocator locator){
+        return new ProviderSignInUtils(locator,this.getUsersConnectionRepository(locator));
+    }
 }

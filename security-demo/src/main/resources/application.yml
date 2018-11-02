@@ -14,5 +14,5 @@ i-security:
     remeberme-time: 60
   social:
     qq:
-      app-id: 101514119
-      app-key: f8f2ae2996d89a153c5a129fef1cfd02
+      appId: 101514119
+      appKey: f8f2ae2996d89a153c5a129fef1cfd02

@@ -13,4 +13,6 @@ public class BrowserProperties  {
     private Duration remebermeTime = Duration.ofSeconds(60L);*/
 
     private int remebermeTime = 60 * 60;
+
+    private String signupPage = "/signup.html";
 }
