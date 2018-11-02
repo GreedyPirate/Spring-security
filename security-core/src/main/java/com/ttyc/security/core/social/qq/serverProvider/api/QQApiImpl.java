@@ -3,6 +3,7 @@ package com.ttyc.security.core.social.qq.serverProvider.api;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
 import org.springframework.social.oauth2.TokenStrategy;
@@ -40,8 +41,15 @@ public class QQApiImpl extends AbstractOAuth2ApiBinding implements QQApi {
         params.put("oauth_consumer_key", appId);
         params.put("openid", this.openid);
         ResponseEntity<String> entity = getRestTemplate().getForEntity(USER_INFO_URL, String.class, params);
-        String body = entity.getBody();
-        return JSON.parseObject(body, QQUserInfo.class);
+        if(entity.getStatusCode().equals(HttpStatus.OK)){
+            String body = entity.getBody();
+            QQUserInfo qqUserInfo = JSON.parseObject(body, QQUserInfo.class);
+            // 返回中没有openid，必须设置回去，后面的userconnection是必填字段
+            qqUserInfo.setOpenId(this.openid);
+            return qqUserInfo;
+        }else{
+            throw new RuntimeException("获取qq用户信息失败");
+        }
     }
 
 

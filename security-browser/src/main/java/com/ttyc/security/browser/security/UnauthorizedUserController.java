@@ -2,8 +2,6 @@ package com.ttyc.security.browser.security;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ttyc.security.core.config.SecurityProperties;
-import com.ttyc.security.core.social.SocialUserInfo;
-import com.ttyc.security.core.social.qq.serverProvider.api.QQUserInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +43,7 @@ public class UnauthorizedUserController {
      * @return
      * @throws IOException
      */
-    @RequestMapping("access/authorize")
+    @RequestMapping("/access/authorize")
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public JSONObject guide(HttpServletRequest request, HttpServletResponse response) throws IOException {
         SavedRequest savedRequest = requestCache.getRequest(request, response);
@@ -77,6 +75,11 @@ public class UnauthorizedUserController {
     @Autowired
     private ProviderSignInUtils providerSignInUtils;
 
+    /**
+     * 用于展示第三方账号信息
+     * @param request
+     * @return
+     */
     @GetMapping("/social/user")
     public SocialUserInfo getSocialUserInfo(HttpServletRequest request) {
         SocialUserInfo userInfo = new SocialUserInfo();

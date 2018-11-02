@@ -2,6 +2,7 @@ package com.ttyc.security.browser.config;
 
 import com.ttyc.security.core.config.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,7 @@ import javax.sql.DataSource;
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
+    @Qualifier("demoUserDetailService")
     private UserDetailsService userDetailsService;
 
     @Autowired
@@ -59,6 +61,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         String defaultLoginUrl = securityProperties.getBrowser().getLoginPage();
+        String defaultSignupPage = securityProperties.getBrowser().getSignupPage();
         int remeberMeTime = securityProperties.getBrowser().getRemebermeTime();
         http
                 //添加自定义过滤器，并指定位置
@@ -73,7 +76,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                     .passwordParameter("password")
                     //默认登录url，第一个 / 必须有，否则报错isn't a valid redirect URL
                     // 重定义，判断请求类型
-                    .loginPage("/v2/access/authorize")
+                    .loginPage("/access/authorize")
                     //处理登录的接口,默认是/login，参考UsernamePasswordAuthenticationFilter
                     .loginProcessingUrl("/deal-login")
                     .successHandler(authSuccessHandler)
@@ -90,7 +93,10 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .userDetailsService(userDetailsService)
                 .authorizeRequests()
                 // defaultLoginUrl 用户自定义的登录页面也不需要拦截
-                .antMatchers(defaultLoginUrl,"/login/oauth/**").permitAll()
+                .antMatchers(defaultLoginUrl,
+                        "/login/oauth/**",
+                        defaultSignupPage,
+                        "/user/regist").permitAll()
                 //所有的请求
                 .anyRequest()
                 // 指定url可以被所有已认证用户访问

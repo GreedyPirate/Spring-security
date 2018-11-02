@@ -1,4 +1,4 @@
-package com.ttyc.security.core.social;
+package com.ttyc.security.browser.security;
 
 import lombok.Data;
 

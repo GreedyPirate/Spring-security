@@ -24,5 +24,10 @@ public class SecurityProperties implements InitializingBean {
         if(!loginPage.startsWith("/")) {
             browser.setLoginPage("/" + loginPage);
         }
+
+        String signupPage = browser.getSignupPage();
+        if(!signupPage.startsWith("/")) {
+            browser.setSignupPage("/" + signupPage);
+        }
     }
 }

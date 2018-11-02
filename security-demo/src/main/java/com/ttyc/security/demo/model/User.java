@@ -13,12 +13,12 @@ public class User {
 
     private Long id;
 
-    @NotBlank(groups = {Default.class}, message = "请输入用户名")
+    @NotBlank(message = "请输入用户名")
     private String username;
 
-    @NotBlank(groups = {NewUser.class}, message = "请输入密码")
+    @NotBlank(message = "请输入密码")
     private String password;
 
-    @In(groups = {RMBUser.class}, values = {1,2,3}, message = "非法的用户类型")
-    private Integer type;
+    @In(values = {1,2}, message = "非法的注册类型")
+    private Integer registType;
 }

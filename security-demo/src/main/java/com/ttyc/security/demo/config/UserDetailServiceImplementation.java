@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 /**
  * 这是一个demo，最后是使用方实现
  */
-@Component
+@Component("demoUserDetailService")
 @Slf4j
 public class UserDetailServiceImplementation implements UserDetailsService, SocialUserDetailsService {
 

@@ -1,21 +1,24 @@
 package com.ttyc.security.demo.controller;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.ttyc.security.demo.error.ServiceException;
 import com.ttyc.security.demo.error.UserError;
 import com.ttyc.security.demo.model.User;
+import com.ttyc.security.demo.service.UserService;
 import com.ttyc.security.demo.validator.NewUser;
 import com.ttyc.security.demo.validator.RMBUser;
-import lombok.experimental.var;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.social.connect.web.ProviderSignInUtils;
+import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -24,16 +27,14 @@ import java.util.concurrent.TimeUnit;
 public class UserController {
 
     @Autowired
-    ProviderSignInUtils providerSignInUtils;
+    private UserService userService;
+
+    RedirectStrategy strategy = new DefaultRedirectStrategy();
 
     @PostMapping("/regist")
-    public void regist(User user, HttpServletRequest request) {
-
-        //不管是注册用户还是绑定用户，都会拿到一个用户唯一标识。
-        String userId = user.getUsername();
-        // 在这里就可以执行绑定或则注册用户的逻辑了
-        // 然后使用 doPostSignUp 进行插入数据库
-        providerSignInUtils.doPostSignUp(userId, new ServletWebRequest(request));
+    public Boolean regist(User user, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        userService.regist(user,request);
+        return Boolean.TRUE;
     }
 
     DeferredResult<User> userDeferredResult = new DeferredResult<>();

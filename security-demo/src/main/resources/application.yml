@@ -7,10 +7,17 @@ spring:
     password: '0817'
   session:
     store-type: none
+mybatis:
+  type-aliases-package: com.ttyc.security.demo.model
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
 i-security:
   browser:
     login-type: JSON
-    login-page: demo-login.html
+    login-page: /demo-login.html
+    signup-page: /demo-signup.html
     remeberme-time: 60
   social:
     qq:
