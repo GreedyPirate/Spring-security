@@ -32,7 +32,7 @@ public class QQApiImpl extends AbstractOAuth2ApiBinding implements QQApi {
         String url = OPEN_ID_URL + accessToken;
         String ret = getRestTemplate().getForObject(url, String.class);
 
-        this.openid = getFieldFromSubJsonString(ret, "callback(", ")", "openid");
+        this.openid = getFieldFromSubJsonString(ret, "callback(", ")", "openid" );
     }
 
     @Override
@@ -41,19 +41,19 @@ public class QQApiImpl extends AbstractOAuth2ApiBinding implements QQApi {
         params.put("oauth_consumer_key", appId);
         params.put("openid", this.openid);
         ResponseEntity<String> entity = getRestTemplate().getForEntity(USER_INFO_URL, String.class, params);
-        if(entity.getStatusCode().equals(HttpStatus.OK)){
+        if (entity.getStatusCode().equals(HttpStatus.OK)) {
             String body = entity.getBody();
             QQUserInfo qqUserInfo = JSON.parseObject(body, QQUserInfo.class);
             // 返回中没有openid，必须设置回去，后面的userconnection是必填字段
             qqUserInfo.setOpenId(this.openid);
             return qqUserInfo;
-        }else{
-            throw new RuntimeException("获取qq用户信息失败");
+        } else {
+            throw new RuntimeException("获取qq用户信息失败" );
         }
     }
 
 
-    public String getFieldFromSubJsonString(String source, String start, String end, String field){
+    public String getFieldFromSubJsonString(String source, String start, String end, String field) {
         String subString = StringUtils.substringBetween(source, start, end).trim();
         JSONObject subJSON = JSONObject.parseObject(subString);
         return subJSON.getString(field);

@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableSocial
-public class SocialConfig extends SocialConfigurerAdapter{
+public class SocialConfig extends SocialConfigurerAdapter {
 
     @Autowired
     private DataSource dataSource;
@@ -31,12 +31,13 @@ public class SocialConfig extends SocialConfigurerAdapter{
 
     /**
      * 过滤器SocialAuthenticationFilter 添加到security过滤链中
+     *
      * @return
      */
     @Bean
     public SpringSocialConfigurer springSocialConfigurer() {
         // 默认配置类，进行组件的组装
-        SpringSocialConfigurer springSocialConfigurer = new ExSpringSocialConfigurer("/login/oauth");
+        SpringSocialConfigurer springSocialConfigurer = new ExSpringSocialConfigurer("/login/oauth" );
         springSocialConfigurer.signupUrl(securityProperties.getBrowser().getSignupPage());
         return springSocialConfigurer;
     }
@@ -44,8 +45,8 @@ public class SocialConfig extends SocialConfigurerAdapter{
     @Override
     public UsersConnectionRepository getUsersConnectionRepository(ConnectionFactoryLocator connectionFactoryLocator) {
         JdbcUsersConnectionRepository usersConnectionRepository =
-                new JdbcUsersConnectionRepository(dataSource,connectionFactoryLocator, Encryptors.noOpText());
-        usersConnectionRepository.setTablePrefix("i_");
+                new JdbcUsersConnectionRepository(dataSource, connectionFactoryLocator, Encryptors.noOpText());
+        usersConnectionRepository.setTablePrefix("i_" );
 
         return usersConnectionRepository;
     }
@@ -55,7 +56,7 @@ public class SocialConfig extends SocialConfigurerAdapter{
         return new AuthenticationNameUserIdSource();
     }
 
-//    @Bean
+    //    @Bean
     public ConnectController connectController(
             ConnectionFactoryLocator connectionFactoryLocator,
             ConnectionRepository connectionRepository) {
@@ -63,7 +64,7 @@ public class SocialConfig extends SocialConfigurerAdapter{
     }
 
     @Bean
-    public ProviderSignInUtils providerSignInUtils(ConnectionFactoryLocator locator){
-        return new ProviderSignInUtils(locator,this.getUsersConnectionRepository(locator));
+    public ProviderSignInUtils providerSignInUtils(ConnectionFactoryLocator locator) {
+        return new ProviderSignInUtils(locator, this.getUsersConnectionRepository(locator));
     }
 }

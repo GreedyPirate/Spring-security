@@ -13,8 +13,8 @@ public class SecurityBrowserApplication {
         SpringApplication.run(SecurityBrowserApplication.class, args);
     }
 
-    @GetMapping("test")
-    public String test(){
+    @GetMapping("test" )
+    public String test() {
         return "test";
     }
 

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserSecurityController {
 
-    @GetMapping("me")
-    public UserDetails getDetail(@AuthenticationPrincipal UserDetails userDetails){
+    @GetMapping("me" )
+    public UserDetails getDetail(@AuthenticationPrincipal UserDetails userDetails) {
         return userDetails;
     }
 }

@@ -9,6 +9,6 @@ public class QQOAuth2ConnectionFactory extends OAuth2ConnectionFactory<QQApi> {
      * Create a {@link OAuth2ConnectionFactory}.
      */
     public QQOAuth2ConnectionFactory(String providerId, String appId, String secret) {
-        super(providerId, new QQServiceProvider(appId,secret), new QQApiAdapter());
+        super(providerId, new QQServiceProvider(appId, secret), new QQApiAdapter());
     }
 }

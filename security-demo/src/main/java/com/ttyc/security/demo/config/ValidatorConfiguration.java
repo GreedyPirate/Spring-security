@@ -9,7 +9,7 @@ import javax.validation.Validator;
 //@Configuration
 public class ValidatorConfiguration {
     @Bean
-    public Validator validator(){
+    public Validator validator() {
         Validator validator = Validation.byProvider(HibernateValidator.class)
                 .configure()
                 .failFast(false)   //快速返回

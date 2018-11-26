@@ -5,7 +5,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
-@ConfigurationProperties("i-security")
+@ConfigurationProperties("i-security" )
 public class SecurityProperties implements InitializingBean {
 
     // 必须new
@@ -15,18 +15,19 @@ public class SecurityProperties implements InitializingBean {
 
     /**
      * 属性检查
+     *
      * @throws Exception
      */
     @Override
     public void afterPropertiesSet() throws Exception {
         // 防止有的人没加 /
         String loginPage = browser.getLoginPage();
-        if(!loginPage.startsWith("/")) {
+        if (!loginPage.startsWith("/" )) {
             browser.setLoginPage("/" + loginPage);
         }
 
         String signupPage = browser.getSignupPage();
-        if(!signupPage.startsWith("/")) {
+        if (!signupPage.startsWith("/" )) {
             browser.setSignupPage("/" + signupPage);
         }
     }

@@ -17,13 +17,13 @@ public class UserService {
     @Autowired
     private ProviderSignInUtils providerSignInUtils;
 
-    public void regist(User user, HttpServletRequest request){
+    public void regist(User user, HttpServletRequest request) {
         userMapper.save(user);
 
         // 是否是社交登录
-        if(user.getRegistType().equals(2)){
+        if (user.getRegistType().equals(2)) {
             //用保存到数据库里的id和openid做映射
-            providerSignInUtils.doPostSignUp(user.getId().toString(),new ServletWebRequest(request));
+            providerSignInUtils.doPostSignUp(user.getId().toString(), new ServletWebRequest(request));
         }
     }
 }

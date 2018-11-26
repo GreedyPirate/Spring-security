@@ -13,12 +13,12 @@ public class User {
 
     private Long id;
 
-    @NotBlank(message = "请输入用户名")
+    @NotBlank(message = "请输入用户名" )
     private String username;
 
-    @NotBlank(message = "请输入密码")
+    @NotBlank(message = "请输入密码" )
     private String password;
 
-    @In(values = {1,2}, message = "非法的注册类型")
+    @In(values = {1, 2}, message = "非法的注册类型" )
     private Integer registType;
 }

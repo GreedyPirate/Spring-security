@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.Charset;
 
-public class QQOAuth2Template extends OAuth2Template{
+public class QQOAuth2Template extends OAuth2Template {
 
     public QQOAuth2Template(String clientId, String clientSecret, String authorizeUrl, String accessTokenUrl) {
         super(clientId, clientSecret, authorizeUrl, accessTokenUrl);
@@ -21,17 +21,17 @@ public class QQOAuth2Template extends OAuth2Template{
     protected RestTemplate createRestTemplate() {
         RestTemplate restTemplate = super.createRestTemplate();
         // 默认是ISO_8859_1
-        restTemplate.getMessageConverters().add(new StringHttpMessageConverter(Charset.forName("UTF-8")));
+        restTemplate.getMessageConverters().add(new StringHttpMessageConverter(Charset.forName("UTF-8" )));
         return restTemplate;
     }
 
     @Override
     protected AccessGrant postForAccessGrant(String accessTokenUrl, MultiValueMap<String, String> parameters) {
         String result = this.getRestTemplate().postForObject(accessTokenUrl, parameters, String.class);
-        String[] items = StringUtils.splitByWholeSeparatorPreserveAllTokens(result, "&");
-        String accessToken = StringUtils.substringAfterLast(items[0], "=");
-        String expiresIn = StringUtils.substringAfterLast(items[1], "=");
-        String refreshToken = StringUtils.substringAfterLast(items[2], "=");
+        String[] items = StringUtils.splitByWholeSeparatorPreserveAllTokens(result, "&" );
+        String accessToken = StringUtils.substringAfterLast(items[0], "=" );
+        String expiresIn = StringUtils.substringAfterLast(items[1], "=" );
+        String refreshToken = StringUtils.substringAfterLast(items[2], "=" );
 
         return new AccessGrant(accessToken, null, refreshToken, Long.parseLong(expiresIn));
     }

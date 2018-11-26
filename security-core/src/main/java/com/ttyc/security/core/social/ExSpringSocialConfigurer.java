@@ -16,6 +16,6 @@ public class ExSpringSocialConfigurer extends SpringSocialConfigurer {
         T t = super.postProcess(object);
         SocialAuthenticationFilter filter = (SocialAuthenticationFilter) t;
         filter.setFilterProcessesUrl(filterProcessesUrl);
-        return (T)filter;
+        return (T) filter;
     }
 }

@@ -2,9 +2,8 @@ package com.ttyc.security.demo.error;
 
 public enum UserError implements ExceptionEntity {
 
-    NO_SUCH_USER(1, "用户不存在"),
-    ERROR_PASSWORD(2, "密码错误"),
-    ;
+    NO_SUCH_USER(1, "用户不存在" ),
+    ERROR_PASSWORD(2, "密码错误" ),;
 
     private final Integer MODULE = 10000;
 

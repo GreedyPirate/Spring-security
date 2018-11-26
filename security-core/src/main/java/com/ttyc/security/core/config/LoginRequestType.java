@@ -6,8 +6,8 @@ package com.ttyc.security.core.config;
  * 失败就不需要了，前端自己跳登录页
  *
  * @author yangjie
- * @since 1.0.0
  * @createTime 2018/10/24
+ * @since 1.0.0
  */
 public enum LoginRequestType {
 
