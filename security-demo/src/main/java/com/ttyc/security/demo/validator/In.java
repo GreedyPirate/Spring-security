@@ -7,7 +7,7 @@ import java.lang.annotation.*;
 @Documented
 // 指定校验类
 @Constraint(validatedBy = InValidator.class)
-@Target( { ElementType.METHOD, ElementType.FIELD })
+@Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface In {
     String message() default "必须在允许的数值内";

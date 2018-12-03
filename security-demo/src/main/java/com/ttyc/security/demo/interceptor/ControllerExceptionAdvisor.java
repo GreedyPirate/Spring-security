@@ -16,13 +16,13 @@ import java.util.List;
 /**
  * Created by Jaynnay on 2018/4/16
  **/
-@RestControllerAdvice(basePackages="com..controller",annotations={RestController.class})
+@RestControllerAdvice(basePackages = "com..controller", annotations = {RestController.class})
 @Slf4j
-public class ControllerExceptionAdvisor{
+public class ControllerExceptionAdvisor {
 
     @ExceptionHandler({ServiceException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseModel handleServiceException(ServiceException ex){
+    public ResponseModel handleServiceException(ServiceException ex) {
         Integer code = ex.getError().getCode();
         String msg = ex.getError().getMsg();
         log.error(msg);
@@ -36,6 +36,7 @@ public class ControllerExceptionAdvisor{
 
     /**
      * 其他错误
+     *
      * @param ex
      * @return
      */
@@ -67,19 +68,20 @@ public class ControllerExceptionAdvisor{
 
     /**
      * 构建错误信息
+     *
      * @param ex
      * @return
      */
-    private String buildErrorMessage(MethodArgumentNotValidException ex){
+    private String buildErrorMessage(MethodArgumentNotValidException ex) {
         List<ObjectError> objectErrors = ex.getBindingResult().getAllErrors();
         StringBuilder messageBuilder = new StringBuilder();
         objectErrors.stream().forEach(error -> {
-            if(error instanceof FieldError){
+            if (error instanceof FieldError) {
                 FieldError fieldError = (FieldError) error;
-                messageBuilder.append(fieldError.getDefaultMessage()).append(",");
+                messageBuilder.append(fieldError.getDefaultMessage()).append("," );
             }
         });
-        String message  = messageBuilder.deleteCharAt(messageBuilder.length() - 1).toString();
+        String message = messageBuilder.deleteCharAt(messageBuilder.length() - 1).toString();
         log.error(message);
         return message;
     }

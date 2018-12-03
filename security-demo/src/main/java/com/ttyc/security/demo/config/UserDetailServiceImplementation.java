@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 /**
  * 这是一个demo，最后是使用方实现
  */
-@Component("demoUserDetailService")
+@Component("demoUserDetailService" )
 @Slf4j
 public class UserDetailServiceImplementation implements UserDetailsService, SocialUserDetailsService {
 
@@ -36,23 +36,24 @@ public class UserDetailServiceImplementation implements UserDetailsService, Soci
          * 5.用户被删除了可以用isEnabled表示
          * 6.UserDetails应该重新实现
          */
-        return new User(username, passwordEncoder.encode("12345"),
-                true,true,true,true,
-                AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
+        return new User(username, passwordEncoder.encode("12345" ),
+                true, true, true, true,
+                AuthorityUtils.commaSeparatedStringToAuthorityList("admin" ));
     }
 
 
     /**
      * 类似上面的
+     *
      * @param userId
      * @return
      * @throws UsernameNotFoundException
      */
     @Override
     public SocialUserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
-        SocialUser admin = new SocialUser(userId, passwordEncoder.encode("12345"),
+        SocialUser admin = new SocialUser(userId, passwordEncoder.encode("12345" ),
                 true, true, true, true,
-                AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
+                AuthorityUtils.commaSeparatedStringToAuthorityList("admin" ));
         return admin;
     }
 }

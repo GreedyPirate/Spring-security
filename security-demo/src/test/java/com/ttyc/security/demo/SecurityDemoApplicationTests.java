@@ -33,9 +33,9 @@ public class SecurityDemoApplicationTests {
     @Test
     public void contextLoads() throws Exception {
         String result = mockMvc
-                .perform(get("/user/101").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .perform(get("/user/101" ).contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(101))
+                .andExpect(jsonPath("$.id" ).value(101))
                 .andReturn().getResponse().getContentAsString();
         System.out.println(result);
     }
@@ -44,15 +44,15 @@ public class SecurityDemoApplicationTests {
     public void testQuery() throws Exception {
         String result =
                 //执行get请求，这里有个小坑，第一个/必须有
-                mockMvc.perform(get("/user/info")
+                mockMvc.perform(get("/user/info" )
                         //设置content-type请求头
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         //设置参数
-                        .param("name", "jay"))
+                        .param("name", "jay" ))
                         //预期的相应码是200-ok
                         .andExpect(status().isOk())
                         //预期的id值为101
-                        .andExpect(jsonPath("$.username").value("jays"))
+                        .andExpect(jsonPath("$.username" ).value("jays" ))
                         //获取响应体
                         .andReturn().getResponse().getContentAsString();
         System.out.println(result);
@@ -61,7 +61,7 @@ public class SecurityDemoApplicationTests {
     @Test
     public void testBlankName() throws Exception {
         String params = "{\"id\": 101,\"username\": \"\",\"password\": \"1234\"}";
-        mockMvc.perform(post("/user/login")
+        mockMvc.perform(post("/user/login" )
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(params))
                 .andExpect(status().isBadRequest());
@@ -70,7 +70,7 @@ public class SecurityDemoApplicationTests {
     @Test
     public void testInFaild() throws Exception {
         String params = "{\"id\": 101,\"username\": \"jay\",\"password\": \"1234\",\"type\": \"5\"}";
-        mockMvc.perform(post("/user/login")
+        mockMvc.perform(post("/user/login" )
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(params))
                 .andExpect(status().isBadRequest());
@@ -79,7 +79,7 @@ public class SecurityDemoApplicationTests {
     @Test
     public void testInFaildMessage() throws Exception {
         String params = "{\"id\": 101,\"username\": \"jay\",\"password\": \"1234\",\"type\": \"5\"}";
-        String result = mockMvc.perform(post("/user/login")
+        String result = mockMvc.perform(post("/user/login" )
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(params))
                 .andExpect(status().isBadRequest())
@@ -90,7 +90,7 @@ public class SecurityDemoApplicationTests {
     @Test
     public void testError() throws Exception {
         String result =
-                mockMvc.perform(get("/user/error"))
+                mockMvc.perform(get("/user/error" ))
                         .andExpect(status().isInternalServerError())
                         .andReturn().getResponse().getContentAsString();
         System.out.println(result);
@@ -100,7 +100,7 @@ public class SecurityDemoApplicationTests {
     @Test
     public void testNormal() throws Exception {
         String params = "{\"id\": 101,\"username\": \"tom\",\"password\": \"\",\"type\": \"5\"}";
-        String result = mockMvc.perform(post("/user/normal")
+        String result = mockMvc.perform(post("/user/normal" )
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(params))
                 .andExpect(status().isBadRequest())
@@ -111,7 +111,7 @@ public class SecurityDemoApplicationTests {
     @Test
     public void testRMB() throws Exception {
         String params = "{\"id\": 101,\"username\": \"tom\",\"password\": \"\",\"type\": \"5\"}";
-        String result = mockMvc.perform(post("/user/rmb")
+        String result = mockMvc.perform(post("/user/rmb" )
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(params))
                 .andExpect(status().isBadRequest())

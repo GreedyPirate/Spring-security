@@ -10,9 +10,9 @@ import java.util.concurrent.*;
 public class ThreadTest {
 
     @Test
-    public void testUser(){
+    public void testUser() {
         ExecutorService service =
-                new ThreadPoolExecutor(10,20,10L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10));
+                new ThreadPoolExecutor(10, 20, 10L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(10));
 
         List<Future<User>> results = new ArrayList<>();
         for (long i = 0; i < 100; i++) {

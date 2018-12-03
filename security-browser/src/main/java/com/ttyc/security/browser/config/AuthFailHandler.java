@@ -24,12 +24,12 @@ public class AuthFailHandler extends SimpleUrlAuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-        if(securityProperties.getBrowser().getLoginType().equals(LoginRequestType.JSON)) {
+        if (securityProperties.getBrowser().getLoginType().equals(LoginRequestType.JSON)) {
             httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
             httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             httpServletResponse.getWriter().write(JSON.toJSONString(e));
-        }else{
-            super.onAuthenticationFailure(httpServletRequest,httpServletResponse,e);
+        } else {
+            super.onAuthenticationFailure(httpServletRequest, httpServletResponse, e);
         }
     }
 }

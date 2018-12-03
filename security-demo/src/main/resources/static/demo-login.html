@@ -5,27 +5,27 @@
     <title>demo系统登录</title>
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <style>
-        a{
+        a {
             width: 20px;
             height: 20px;
         }
     </style>
 </head>
 <body>
-    这是接入应用自定义的登录页
+这是接入应用自定义的登录页
 
-    <form id="login" action="/deal-login" method="post">
-        账号：<input name="username"/>
-        密码<input type="password" name="password"/>
-        <!-- true, on, yes, 1 都可以-->
-        记住我:<input type="checkbox" name="remember-me" value="true">
-        登录<input type="submit">
-    </form>
+<form id="login" action="/deal-login" method="post">
+    账号：<input name="username"/>
+    密码<input type="password" name="password"/>
+    <!-- true, on, yes, 1 都可以-->
+    记住我:<input type="checkbox" name="remember-me" value="true">
+    登录<input type="submit">
+</form>
 
-    <h3>第三方登录</h3>
-    <!-- url: SocialAuthenticationFilter#/auth, provider-id=qq-->
-    <form action="/login/oauth/qq" method="post">
-        <button type="submit">QQ登录</button>
-    </form>
+<h3>第三方登录</h3>
+<!-- url: SocialAuthenticationFilter#/auth, provider-id=qq-->
+<form action="/login/oauth/qq" method="post">
+    <button type="submit">QQ登录</button>
+</form>
 </body>
 </html>

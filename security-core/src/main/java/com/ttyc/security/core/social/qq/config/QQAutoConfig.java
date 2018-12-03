@@ -14,7 +14,7 @@ import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.UsersConnectionRepository;
 
 @Configuration
-@ConditionalOnProperty(prefix = "i-security.social.qq", name = "app-id")
+@ConditionalOnProperty(prefix = "i-security.social.qq", name = "app-id" )
 public class QQAutoConfig extends SocialConfigurerAdapter {
     @Autowired
     private SecurityProperties securityProperties;
@@ -24,14 +24,14 @@ public class QQAutoConfig extends SocialConfigurerAdapter {
         connectionFactoryConfigurer.addConnectionFactory(this.buildConnectionFactory());
     }
 
-    public ConnectionFactory buildConnectionFactory(){
+    public ConnectionFactory buildConnectionFactory() {
         QQProperties qq = securityProperties.getSocial().getQq();
 
         String appId = qq.getAppId();
         String appKey = qq.getAppKey();
         String providerId = securityProperties.getSocial().getQq().getProviderId();
 
-        return new QQOAuth2ConnectionFactory(providerId,appId,appKey);
+        return new QQOAuth2ConnectionFactory(providerId, appId, appKey);
     }
 
     // 后补：做到处理注册逻辑的时候发现的一个bug：登录完成后，数据库没有数据，但是再次登录却不用注册了

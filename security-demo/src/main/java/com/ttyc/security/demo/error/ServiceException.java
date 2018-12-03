@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ServiceException extends RuntimeException{
+public class ServiceException extends RuntimeException {
 
     ExceptionEntity error;
 

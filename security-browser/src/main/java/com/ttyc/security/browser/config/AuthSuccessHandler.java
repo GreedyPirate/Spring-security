@@ -15,15 +15,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- *
  * AuthenticationSuccessHandler
- *
+ * <p>
  * 在登录表单登录成功之后的处理
  * 1. 返回json信息的用户信息？
  * 2. 重定向到原链接？
+ *
  * @author yangjie
- * @since 1.0.0
  * @createTime 2018/10/24
+ * @since 1.0.0
  */
 @Component
 public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -34,11 +34,11 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
 
-        if(securityProperties.getBrowser().getLoginType().equals(LoginRequestType.JSON)) {
+        if (securityProperties.getBrowser().getLoginType().equals(LoginRequestType.JSON)) {
             httpServletResponse.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             httpServletResponse.getWriter().write(JSON.toJSONString(authentication));
-        }else {
-            super.onAuthenticationSuccess(httpServletRequest,httpServletResponse,authentication);
+        } else {
+            super.onAuthenticationSuccess(httpServletRequest, httpServletResponse, authentication);
         }
     }
 }
